@@ -146,8 +146,13 @@ export default class Bot {
 
   private async handleTipETHCommand(obj: { tweet: Tweet, sender: User, receiver: User, amount: number, symbol: string }): Promise<any> {
     const tweet = obj.tweet, sender = obj.sender, receiver = obj.receiver, amount = obj.amount, symbol = obj.symbol
+<<<<<<< HEAD
     let amountInEth = Util.normalizeToEth(symbol, amount)
     if (amount <= 0 || amountInEth > this.tokens.ETH.maxWithdrawAmount) {
+=======
+    let inEth = Util.normalizeToEth(symbol, amount, this.tokens.ETH.maxWithdrawAmount)
+    if (amount <= 0 || inEth.amount > inEth.maxAmount) {
+>>>>>>> Accept tip amount in Wei
       await Twitter.postTweet({
         locale: sender.lang,
         phrase: 'Tip Limit Error',
@@ -169,15 +174,24 @@ export default class Bot {
     const result = await API.tipEther({
       senderId: sender.id_str,
       receiverId: receiver.id_str,
+<<<<<<< HEAD
       amount: amountInEth
+=======
+      amount: inEth.amount
+>>>>>>> Accept tip amount in Wei
     }).catch(async err => {
       await Twitter.postTweet({
         locale: sender.lang,
         phrase: 'Tip Transaction Error',
         data: {
           sender: sender.screen_name,
+<<<<<<< HEAD
           amount: amount,
           symbol: symbol
+=======
+          amount: inEth.amount,
+          symbol: this.tokens.ETH.symbol
+>>>>>>> Accept tip amount in Wei
         },
         replyTo: tweet.id_str
       })
@@ -188,7 +202,11 @@ export default class Bot {
       tweetId: tweet.id_str,
       senderId: sender.id_str,
       receiverId: receiver.id_str,
+<<<<<<< HEAD
       amount: amountInEth,
+=======
+      amount: inEth.amount,
+>>>>>>> Accept tip amount in Wei
       symbol: this.tokens.ETH.symbol,
       txId: result.txId
     })
@@ -201,8 +219,13 @@ export default class Bot {
       data: {
         sender: sender.screen_name,
         receiver: receiver.screen_name,
+<<<<<<< HEAD
         amount: amount,
         symbol: symbol,
+=======
+        amount: inEth.amount,
+        symbol: this.tokens.ETH.symbol,
+>>>>>>> Accept tip amount in Wei
         txId: result.txId
       },
       replyTo: tweet.id_str
@@ -211,8 +234,13 @@ export default class Bot {
 
   private async handleWithdrawETHCommand(obj: { tweet: Tweet, sender: User, address: string, amount: number, symbol: string }): Promise<any> {
     const tweet = obj.tweet, sender = obj.sender, address = obj.address, amount = obj.amount, symbol = obj.symbol
+<<<<<<< HEAD
     let amountInEth = Util.normalizeToEth(symbol, amount)
     if (amount <= 0 || amountInEth > this.tokens.ETH.maxWithdrawAmount) {
+=======
+    let inEth = Util.normalizeToEth(symbol, amount, this.tokens.ETH.maxWithdrawAmount)
+    if (amount <= 0 || inEth.amount > inEth.maxAmount) {
+>>>>>>> Accept tip amount in Wei
       await Twitter.postTweet({ // this may fail due to tweet limit
         locale: sender.lang,
         phrase: 'Withdraw Limit Error',
