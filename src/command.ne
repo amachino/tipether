@@ -10,6 +10,7 @@ const lexer = moo.compile({
   username: /@[0-9a-zA-Z_]{1,15}/,
   number: /(?:[1-9][0-9]*|0)(?:\.[0-9]+)?/,
   eth: /(?:ETH|eth)/,
+  wei: /(?:Wei|wei)/,
   command: ['tip', 'withdraw', 'deposit', 'balance', 'help'],
   any: /.+/
 })
@@ -40,6 +41,7 @@ HelpCommand -> __ "help" {% d => ({ type: CommandType.HELP }) %}
 Amount -> Number _ Symbol {% d => ({ amount: d[0], symbol: d[2] }) %}
 
 Symbol -> %eth {% d => 'ETH' %}
+        | %wei {% d => 'Wei' %}
 
 Address -> %address {% d => d[0].value %}
 
