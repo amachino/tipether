@@ -125,8 +125,8 @@ export default class Bot {
 
   private async handleTipETHCommand(obj: { tweet: Tweet, sender: User, receiver: User, amount: number, symbol: string }): Promise<any> {
     const tweet = obj.tweet, sender = obj.sender, receiver = obj.receiver, amount = obj.amount, symbol = obj.symbol
-    let inEth = Util.normalizeToEth(symbol, amount, this.tokens.ETH.maxWithdrawAmount)
-    if (amount <= 0 || inEth.amount > inEth.maxAmount) {
+    let amountInEth = Util.normalizeToEth(symbol, amount)
+    if (amount <= 0 || amountInEth > this.tokens.ETH.maxWithdrawAmount) {
       await Twitter.postTweet({
         text: i18n.__('Tip Limit Error', {
           sender: sender.screen_name,
@@ -141,12 +141,12 @@ export default class Bot {
     const result = await API.tipEther({
       senderId: sender.id_str,
       receiverId: receiver.id_str,
-      amount: inEth.amount
+      amount: amountInEth
     }).catch(async err => {
       await Twitter.postTweet({
         text: i18n.__('Tip Transaction Error', {
           sender: sender.screen_name,
-          amount: inEth.amount,
+          amount: amountInEth,
           symbol: this.tokens.ETH.symbol
         }),
         replyTo: tweet.id_str
@@ -158,7 +158,7 @@ export default class Bot {
       tweetId: tweet.id_str,
       senderId: sender.id_str,
       receiverId: receiver.id_str,
-      amount: inEth.amount,
+      amount: amountInEth,
       symbol: this.tokens.ETH.symbol,
       txId: result.txId
     })
@@ -169,7 +169,7 @@ export default class Bot {
       text: i18n.__('Tip Sent', {
         sender: sender.screen_name,
         receiver: receiver.screen_name,
-        amount: inEth.amount,
+        amount: amountInEth,
         symbol: this.tokens.ETH.symbol,
         txId: result.txId
       }),
@@ -179,8 +179,8 @@ export default class Bot {
 
   private async handleWithdrawETHCommand(obj: { tweet: Tweet, sender: User, address: string, amount: number, symbol: string }): Promise<any> {
     const tweet = obj.tweet, sender = obj.sender, address = obj.address, amount = obj.amount, symbol = obj.symbol
-    let inEth = Util.normalizeToEth(symbol, amount, this.tokens.ETH.maxWithdrawAmount)
-    if (amount <= 0 || inEth.amount > inEth.maxAmount) {
+    let amountInEth = Util.normalizeToEth(symbol, amount)
+    if (amount <= 0 || amountInEth > this.tokens.ETH.maxWithdrawAmount) {
       await Twitter.postTweet({
         text: i18n.__('Withdraw Limit Error', {
           sender: sender.screen_name,
@@ -195,12 +195,12 @@ export default class Bot {
     const result = await API.withdrawEther({
       senderId: sender.id_str,
       address: address,
-      amount: inEth.amount
+      amount: amountInEth
     }).catch(async err => {
       await Twitter.postTweet({
         text: i18n.__('Withdraw Transaction Error', {
           sender: sender.screen_name,
-          amount: inEth.amount,
+          amount: amountInEth,
           symbol: this.tokens.ETH.symbol
         }),
         replyTo: tweet.id_str
@@ -212,7 +212,7 @@ export default class Bot {
       tweetId: tweet.id_str,
       senderId: sender.id_str,
       receiverAddress: address,
-      amount: inEth.amount,
+      amount: amountInEth,
       symbol: this.tokens.ETH.symbol,
       txId: result.txId
     })
@@ -223,7 +223,7 @@ export default class Bot {
       text: i18n.__('Transaction Sent', {
         sender: sender.screen_name,
         address: address,
-        amount: inEth.amount,
+        amount: amountInEth,
         symbol: this.tokens.ETH.symbol,
         txId: result.txId
       }),
