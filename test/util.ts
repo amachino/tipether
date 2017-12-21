@@ -9,7 +9,7 @@ describe('Util', () => {
         assert.deepEqual(1, Util.normalizeToEth('ETH', 1))
       })
     })
-    
+
     context('when args passed in Wei', () => {
       it('does not normalize the args', () => {
         assert.deepEqual(0.000000001, Util.normalizeToEth('Wei', 10000000000))
@@ -24,4 +24,5 @@ describe('Util', () => {
       })
     })
   })
+
 })
