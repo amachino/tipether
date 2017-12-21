@@ -7,6 +7,7 @@ import Receipt from './receipt'
 import { Twitter, Tweet, User } from './twitter'
 import { Parser, Command, CommandType } from './parser'
 import { TokenData, TokenMap } from './token'
+import Util from './util'
 
 export default class Bot {
 
@@ -145,7 +146,8 @@ export default class Bot {
 
   private async handleTipETHCommand(obj: { tweet: Tweet, sender: User, receiver: User, amount: number, symbol: string }): Promise<any> {
     const tweet = obj.tweet, sender = obj.sender, receiver = obj.receiver, amount = obj.amount, symbol = obj.symbol
-    if (amount <= 0 || amount > this.tokens.ETH.maxTipAmount) {
+    let inEth = Util.normalizeToEth(symbol, amount, this.tokens.ETH.maxWithdrawAmount)
+    if (amount <= 0 || inEth.amount > inEth.maxAmount) {
       await Twitter.postTweet({
         locale: sender.lang,
         phrase: 'Tip Limit Error',
@@ -159,11 +161,6 @@ export default class Bot {
       throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxTipAmount}"`)
     }
 
-    if (symbol.toUpperCase() !== this.tokens.ETH.symbol) {
-      // TODO: accept WEI
-      throw new Error(`Invalid symbol: should be "ETH"`)
-    }
-
     const receipt = await Receipt.get(tweet.id_str)
     if (receipt !== null) {
       throw new Error('The tweet has been processed already')
@@ -172,14 +169,14 @@ export default class Bot {
     const result = await API.tipEther({
       senderId: sender.id_str,
       receiverId: receiver.id_str,
-      amount: amount
+      amount: inEth.amount
     }).catch(async err => {
       await Twitter.postTweet({
         locale: sender.lang,
         phrase: 'Tip Transaction Error',
         data: {
           sender: sender.screen_name,
-          amount: amount,
+          amount: inEth.amount,
           symbol: this.tokens.ETH.symbol
         },
         replyTo: tweet.id_str
@@ -191,7 +188,7 @@ export default class Bot {
       tweetId: tweet.id_str,
       senderId: sender.id_str,
       receiverId: receiver.id_str,
-      amount: amount,
+      amount: inEth.amount,
       symbol: this.tokens.ETH.symbol,
       txId: result.txId
     })
@@ -204,7 +201,7 @@ export default class Bot {
       data: {
         sender: sender.screen_name,
         receiver: receiver.screen_name,
-        amount: amount,
+        amount: inEth.amount,
         symbol: this.tokens.ETH.symbol,
         txId: result.txId
       },
@@ -214,7 +211,8 @@ export default class Bot {
 
   private async handleWithdrawETHCommand(obj: { tweet: Tweet, sender: User, address: string, amount: number, symbol: string }): Promise<any> {
     const tweet = obj.tweet, sender = obj.sender, address = obj.address, amount = obj.amount, symbol = obj.symbol
-    if (amount <= 0 || amount > this.tokens.ETH.maxWithdrawAmount) {
+    let inEth = Util.normalizeToEth(symbol, amount, this.tokens.ETH.maxWithdrawAmount)
+    if (amount <= 0 || inEth.amount > inEth.maxAmount) {
       await Twitter.postTweet({ // this may fail due to tweet limit
         locale: sender.lang,
         phrase: 'Withdraw Limit Error',
@@ -228,11 +226,6 @@ export default class Bot {
       throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxWithdrawAmount}"`)
     }
 
-    if (symbol.toUpperCase() !== this.tokens.ETH.symbol) {
-      // TODO: accept WEI
-      throw new Error(`Invalid symbol: should be "ETH"`)
-    }
-
     const receipt = await Receipt.get(tweet.id_str)
     if (receipt !== null) {
       throw new Error('The tweet has been processed already')
@@ -241,14 +234,14 @@ export default class Bot {
     const result = await API.withdrawEther({
       senderId: sender.id_str,
       address: address,
-      amount: amount
+      amount: inEth.amount
     }).catch(async err => {
       await Twitter.postTweet({
         locale: sender.lang,
         phrase: 'Withdraw Transaction Error',
         data: {
           sender: sender.screen_name,
-          amount: amount,
+          amount: inEth.amount,
           symbol: this.tokens.ETH.symbol
         },
         replyTo: tweet.id_str
@@ -260,7 +253,7 @@ export default class Bot {
       tweetId: tweet.id_str,
       senderId: sender.id_str,
       receiverAddress: address,
-      amount: amount,
+      amount: inEth.amount,
       symbol: this.tokens.ETH.symbol,
       txId: result.txId
     })
@@ -273,7 +266,7 @@ export default class Bot {
       data: {
         sender: sender.screen_name,
         address: address,
-        amount: amount,
+        amount: inEth.amount,
         symbol: this.tokens.ETH.symbol,
         txId: result.txId
       },
