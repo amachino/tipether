@@ -1,0 +1,11 @@
+{
+  "Tip Sent": "🎁 @{{sender}} sent {{amount}} {{symbol}} to @{{receiver}} 🎉",
+  "Transaction Sent": "@{{sender}} You sent {{amount}} {{symbol}} to {{address}}\nTransaction ID: {{txId}}",
+  "Show Balance": "@{{sender}} Your balance is {{balance}} {{symbol}}",
+  "Show Address": "@{{sender}} Your deposit address is {{address}}",
+  "Show Help": "@{{sender}} TIP: \"@{{botName}} tip @<username> (<amount> ETH)\"\nBALANCE: \"@{{botName}} balance\"\nDEPOSIT: \"@{{botName}} deposit\"\nWITHDRAW: \"@{{botName}} withdraw <amount> ETH <address>\"",
+  "Tip Limit Error": "@{{sender}} Maximum tip is currently {{limit}} {{symbol}}. Please try again with smaller amount.",
+  "Tip Transaction Error": "@{{sender}} Insufficient funds for {{amount}} {{symbol}} + gas. Please check your balance.",
+  "Withdraw Limit Error": "@{{sender}} Maximum withdrawal is currently {{limit}} {{symbol}}. Please try again with smaller amount.",
+  "Withdraw Transaction Error": "@{{sender}} Insufficient funds for {{amount}} {{symbol}} + gas. Please check your balance."
+}

@@ -1,0 +1,32 @@
+{
+  "name": "tipether",
+  "version": "0.0.1",
+  "description": "Ethereum Tip-bot for Twitter",
+  "main": "build/index.js",
+  "scripts": {
+    "dev": "npm run build && npm run start",
+    "build": "npm run nearley && tsc",
+    "watch": "tsc --watch",
+    "start": "node build/index.js",
+    "test": "mocha --require ts-node/register test/**/*.ts",
+    "nearley": "nearleyc ./src/command.ne -o ./src/command.ts"
+  },
+  "author": "tipether",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.17.1",
+    "dotenv": "^4.0.0",
+    "firebase-admin": "^5.5.1",
+    "i18n": "^0.8.3",
+    "moo": "^0.4.3",
+    "nearley": "^2.11.0",
+    "twitter": "^1.7.1",
+    "winston": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.0.39",
+    "mocha": "^4.0.1",
+    "ts-node": "^4.0.2",
+    "typescript": "^2.6.2"
+  }
+}
