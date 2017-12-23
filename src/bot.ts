@@ -278,7 +278,7 @@ export default class Bot {
     return Twitter.postTweet({
       text: i18n.__('Show Help', {
         sender: user.screen_name,
-        botName: this.screenName,
+        botName: this.screenName
       }),
       replyTo: tweet.id_str
     })

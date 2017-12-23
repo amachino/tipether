@@ -16,7 +16,7 @@ export default class API {
     return this.call(config.API_FUNC_TIP_ETHER, data)
   }
 
-  public static async withdrawEther(data: { senderId: string, address: string, amount: number }): Promise<{ txId: string }> {
+  public static withdrawEther(data: { senderId: string, address: string, amount: number }): Promise<{ txId: string }> {
     return this.call(config.API_FUNC_WITHDRAW_ETHER, data)
   }
 

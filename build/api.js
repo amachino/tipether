@@ -21,9 +21,7 @@ class API {
         return this.call(config_1.default.API_FUNC_TIP_ETHER, data);
     }
     static withdrawEther(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.call(config_1.default.API_FUNC_WITHDRAW_ETHER, data);
-        });
+        return this.call(config_1.default.API_FUNC_WITHDRAW_ETHER, data);
     }
     static call(name, data) {
         return __awaiter(this, void 0, void 0, function* () {

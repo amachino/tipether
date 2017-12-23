@@ -1,0 +1,17 @@
+{
+  "extends": "tslint:recommended",
+  "rules": {
+    "semicolon": [true, "never"],
+    "quotemark": [true, "single"],
+    "trailing-comma": [true, { "multiline": "never", "singleline": "never" }],
+    "max-line-length": false,
+    "object-literal-sort-keys": false,
+    "object-literal-shorthand": false,
+    "ordered-imports": false,
+    "arrow-parens": false,
+    "one-variable-per-declaration": false,
+    "interface-over-type-literal": false,
+    "member-ordering": false,
+    "interface-name": false
+  }
+}

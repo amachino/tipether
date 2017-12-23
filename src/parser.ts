@@ -36,9 +36,9 @@ export class Parser {
         return
       }
       try {
-        const text = line.slice(this.botName.length)
+        const textToParse = line.slice(this.botName.length)
         parser = new nearley.Parser(grammer)
-        parser.feed(text)
+        parser.feed(textToParse)
         if (parser.results.length > 0) {
           results.push(parser.results[0])
         }

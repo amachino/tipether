@@ -261,7 +261,7 @@ class Bot {
             return twitter_1.Twitter.postTweet({
                 text: i18n_1.default.__('Show Help', {
                     sender: user.screen_name,
-                    botName: this.screenName,
+                    botName: this.screenName
                 }),
                 replyTo: tweet.id_str
             });
