@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const TwitterAPI = require("twitter");
 const config_1 = require("./config");
+const i18n_1 = require("./i18n");
 const api = new TwitterAPI({
     consumer_key: config_1.default.TWITTER_CONSUMER_KEY,
     consumer_secret: config_1.default.TWITTER_CONSUMER_SECRET,
@@ -34,10 +35,10 @@ class Twitter {
             }
         });
     }
-    static postTweet({ text, replyTo }) {
+    static postTweet({ locale, phrase, data, replyTo }) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield api.post('statuses/update', {
-                status: text,
+                status: i18n_1.default.__({ phrase: phrase, locale: locale }, data),
                 in_reply_to_status_id: replyTo
             });
             return result;

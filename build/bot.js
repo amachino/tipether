@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = require("./config");
 const logger_1 = require("./logger");
-const i18n_1 = require("./i18n");
 const api_1 = require("./api");
 const receipt_1 = require("./receipt");
 const twitter_1 = require("./twitter");
@@ -120,11 +119,13 @@ class Bot {
             const tweet = obj.tweet, sender = obj.sender, receiver = obj.receiver, amount = obj.amount, symbol = obj.symbol;
             if (amount <= 0 || amount > this.tokens.ETH.maxTipAmount) {
                 yield twitter_1.Twitter.postTweet({
-                    text: i18n_1.default.__('Tip Limit Error', {
+                    locale: sender.lang,
+                    phrase: 'Tip Limit Error',
+                    data: {
                         sender: sender.screen_name,
                         limit: this.tokens.ETH.maxTipAmount,
                         symbol: this.tokens.ETH.symbol
-                    }),
+                    },
                     replyTo: tweet.id_str
                 });
                 throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxTipAmount}"`);
@@ -143,11 +144,13 @@ class Bot {
                 amount: amount
             }).catch((err) => __awaiter(this, void 0, void 0, function* () {
                 yield twitter_1.Twitter.postTweet({
-                    text: i18n_1.default.__('Tip Transaction Error', {
+                    locale: sender.lang,
+                    phrase: 'Tip Transaction Error',
+                    data: {
                         sender: sender.screen_name,
                         amount: amount,
                         symbol: this.tokens.ETH.symbol
-                    }),
+                    },
                     replyTo: tweet.id_str
                 });
                 throw err;
@@ -162,13 +165,15 @@ class Bot {
             });
             yield twitter_1.Twitter.postFavorite({ id: tweet.id_str });
             return twitter_1.Twitter.postTweet({
-                text: i18n_1.default.__('Tip Sent', {
+                locale: receiver.lang,
+                phrase: 'Tip Sent',
+                data: {
                     sender: sender.screen_name,
                     receiver: receiver.screen_name,
                     amount: amount,
                     symbol: this.tokens.ETH.symbol,
                     txId: result.txId
-                }),
+                },
                 replyTo: tweet.id_str
             });
         });
@@ -178,11 +183,13 @@ class Bot {
             const tweet = obj.tweet, sender = obj.sender, address = obj.address, amount = obj.amount, symbol = obj.symbol;
             if (amount <= 0 || amount > this.tokens.ETH.maxWithdrawAmount) {
                 yield twitter_1.Twitter.postTweet({
-                    text: i18n_1.default.__('Withdraw Limit Error', {
+                    locale: sender.lang,
+                    phrase: 'Withdraw Limit Error',
+                    data: {
                         sender: sender.screen_name,
                         limit: this.tokens.ETH.maxWithdrawAmount,
                         symbol: this.tokens.ETH.symbol
-                    }),
+                    },
                     replyTo: tweet.id_str
                 });
                 throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxWithdrawAmount}"`);
@@ -201,11 +208,13 @@ class Bot {
                 amount: amount
             }).catch((err) => __awaiter(this, void 0, void 0, function* () {
                 yield twitter_1.Twitter.postTweet({
-                    text: i18n_1.default.__('Withdraw Transaction Error', {
+                    locale: sender.lang,
+                    phrase: 'Withdraw Transaction Error',
+                    data: {
                         sender: sender.screen_name,
                         amount: amount,
                         symbol: this.tokens.ETH.symbol
-                    }),
+                    },
                     replyTo: tweet.id_str
                 });
                 throw err;
@@ -220,13 +229,15 @@ class Bot {
             });
             yield twitter_1.Twitter.postFavorite({ id: tweet.id_str });
             return twitter_1.Twitter.postTweet({
-                text: i18n_1.default.__('Transaction Sent', {
+                locale: sender.lang,
+                phrase: 'Transaction Sent',
+                data: {
                     sender: sender.screen_name,
                     address: address,
                     amount: amount,
                     symbol: this.tokens.ETH.symbol,
                     txId: result.txId
-                }),
+                },
                 replyTo: tweet.id_str
             });
         });
@@ -238,10 +249,12 @@ class Bot {
             const result = yield api_1.default.getAddress({ id: user.id_str });
             const address = result.address;
             return twitter_1.Twitter.postTweet({
-                text: i18n_1.default.__('Show Address', {
+                locale: user.lang,
+                phrase: 'Show Address',
+                data: {
                     sender: user.screen_name,
                     address: address
-                }),
+                },
                 replyTo: tweet.id_str
             });
         });
@@ -253,11 +266,13 @@ class Bot {
             const result = yield api_1.default.getBalance({ id: user.id_str });
             const balance = result.balance;
             return twitter_1.Twitter.postTweet({
-                text: i18n_1.default.__('Show Balance', {
+                locale: user.lang,
+                phrase: 'Show Balance',
+                data: {
                     sender: user.screen_name,
                     balance: balance,
                     symbol: this.tokens.ETH.symbol
-                }),
+                },
                 replyTo: tweet.id_str
             });
         });
@@ -267,10 +282,12 @@ class Bot {
             const tweet = obj.tweet;
             const user = tweet.user;
             return twitter_1.Twitter.postTweet({
-                text: i18n_1.default.__('Show Help', {
+                locale: user.lang,
+                phrase: 'Show Help',
+                data: {
                     sender: user.screen_name,
                     botName: this.screenName
-                }),
+                },
                 replyTo: tweet.id_str
             });
         });

@@ -1,5 +1,6 @@
 import * as TwitterAPI from 'twitter'
 import config from './config'
+import i18n from './i18n'
 
 const api = new TwitterAPI({
   consumer_key: config.TWITTER_CONSUMER_KEY,
@@ -49,9 +50,9 @@ export class Twitter {
     }
   }
 
-  public static async postTweet({ text, replyTo }: { text: string, replyTo?: string }): Promise<Tweet> {
+  public static async postTweet({ locale, phrase, data, replyTo }: { locale: string, phrase: string, data?: any, replyTo?: string }): Promise<Tweet> {
     const result = await api.post('statuses/update', {
-      status: text,
+      status: i18n.__({ phrase: phrase, locale: locale }, data),
       in_reply_to_status_id: replyTo
     })
     return result as Tweet

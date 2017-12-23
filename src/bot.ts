@@ -1,6 +1,5 @@
 import config from './config'
 import logger from './logger'
-import i18n from './i18n'
 import API from './api'
 import Receipt from './receipt'
 import { Twitter, Tweet, User } from './twitter'
@@ -126,11 +125,13 @@ export default class Bot {
     const tweet = obj.tweet, sender = obj.sender, receiver = obj.receiver, amount = obj.amount, symbol = obj.symbol
     if (amount <= 0 || amount > this.tokens.ETH.maxTipAmount) {
       await Twitter.postTweet({
-        text: i18n.__('Tip Limit Error', {
+        locale: sender.lang,
+        phrase: 'Tip Limit Error',
+        data: {
           sender: sender.screen_name,
           limit: this.tokens.ETH.maxTipAmount,
           symbol: this.tokens.ETH.symbol
-        }),
+        },
         replyTo: tweet.id_str
       })
       throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxTipAmount}"`)
@@ -152,11 +153,13 @@ export default class Bot {
       amount: amount
     }).catch(async err => {
       await Twitter.postTweet({
-        text: i18n.__('Tip Transaction Error', {
+        locale: sender.lang,
+        phrase: 'Tip Transaction Error',
+        data: {
           sender: sender.screen_name,
           amount: amount,
           symbol: this.tokens.ETH.symbol
-        }),
+        },
         replyTo: tweet.id_str
       })
       throw err
@@ -174,13 +177,15 @@ export default class Bot {
     await Twitter.postFavorite({ id: tweet.id_str })
 
     return Twitter.postTweet({ // this may fail due to tweet limit
-      text: i18n.__('Tip Sent', {
+      locale: receiver.lang,
+      phrase: 'Tip Sent',
+      data: {
         sender: sender.screen_name,
         receiver: receiver.screen_name,
         amount: amount,
         symbol: this.tokens.ETH.symbol,
         txId: result.txId
-      }),
+      },
       replyTo: tweet.id_str
     })
   }
@@ -188,12 +193,14 @@ export default class Bot {
   private async handleWithdrawETHCommand(obj: { tweet: Tweet, sender: User, address: string, amount: number, symbol: string }): Promise<any> {
     const tweet = obj.tweet, sender = obj.sender, address = obj.address, amount = obj.amount, symbol = obj.symbol
     if (amount <= 0 || amount > this.tokens.ETH.maxWithdrawAmount) {
-      await Twitter.postTweet({
-        text: i18n.__('Withdraw Limit Error', {
+      await Twitter.postTweet({ // this may fail due to tweet limit
+        locale: sender.lang,
+        phrase: 'Withdraw Limit Error',
+        data: {
           sender: sender.screen_name,
           limit: this.tokens.ETH.maxWithdrawAmount,
           symbol: this.tokens.ETH.symbol
-        }),
+        },
         replyTo: tweet.id_str
       })
       throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxWithdrawAmount}"`)
@@ -215,11 +222,13 @@ export default class Bot {
       amount: amount
     }).catch(async err => {
       await Twitter.postTweet({
-        text: i18n.__('Withdraw Transaction Error', {
+        locale: sender.lang,
+        phrase: 'Withdraw Transaction Error',
+        data: {
           sender: sender.screen_name,
           amount: amount,
           symbol: this.tokens.ETH.symbol
-        }),
+        },
         replyTo: tweet.id_str
       })
       throw err
@@ -237,13 +246,15 @@ export default class Bot {
     await Twitter.postFavorite({ id: tweet.id_str })
 
     return Twitter.postTweet({ // this may fail due to tweet limit
-      text: i18n.__('Transaction Sent', {
+      locale: sender.lang,
+      phrase: 'Transaction Sent',
+      data: {
         sender: sender.screen_name,
         address: address,
         amount: amount,
         symbol: this.tokens.ETH.symbol,
         txId: result.txId
-      }),
+      },
       replyTo: tweet.id_str
     })
   }
@@ -255,11 +266,13 @@ export default class Bot {
     const result = await API.getAddress({ id: user.id_str })
     const address = result.address
 
-    return Twitter.postTweet({
-      text: i18n.__('Show Address', {
+    return Twitter.postTweet({ // this may fail due to tweet limit
+      locale: user.lang,
+      phrase: 'Show Address',
+      data: {
         sender: user.screen_name,
         address: address
-      }),
+      },
       replyTo: tweet.id_str
     })
   }
@@ -272,11 +285,13 @@ export default class Bot {
     const balance = result.balance
 
     return Twitter.postTweet({
-      text: i18n.__('Show Balance', {
+      locale: user.lang,
+      phrase: 'Show Balance',
+      data: {
         sender: user.screen_name,
         balance: balance,
         symbol: this.tokens.ETH.symbol
-      }),
+      },
       replyTo: tweet.id_str
     })
   }
@@ -286,10 +301,12 @@ export default class Bot {
     const user: User = tweet.user
 
     return Twitter.postTweet({
-      text: i18n.__('Show Help', {
+      locale: user.lang,
+      phrase: 'Show Help',
+      data: {
         sender: user.screen_name,
         botName: this.screenName
-      }),
+      },
       replyTo: tweet.id_str
     })
   }
