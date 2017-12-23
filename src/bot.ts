@@ -141,6 +141,11 @@ export default class Bot {
       throw new Error(`Invalid symbol: should be "ETH"`)
     }
 
+    const receipt = await Receipt.get(tweet.id_str)
+    if (receipt !== null) {
+      throw new Error('The tweet has been processed already')
+    }
+
     const result = await API.tipEther({
       senderId: sender.id_str,
       receiverId: receiver.id_str,
@@ -197,6 +202,11 @@ export default class Bot {
     if (symbol.toUpperCase() !== this.tokens.ETH.symbol) {
       // TODO: accept WEI
       throw new Error(`Invalid symbol: should be "ETH"`)
+    }
+
+    const receipt = await Receipt.get(tweet.id_str)
+    if (receipt !== null) {
+      throw new Error('The tweet has been processed already')
     }
 
     const result = await API.withdrawEther({

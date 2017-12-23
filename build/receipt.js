@@ -15,6 +15,17 @@ var Type;
     Type["WITHDRAW"] = "WITHDRAW";
 })(Type || (Type = {}));
 class Receipt {
+    static get(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const doc = yield store_1.default.collection(this.collection).doc(id).get();
+            if (doc.exists) {
+                return doc.data();
+            }
+            else {
+                return null;
+            }
+        });
+    }
     static createTipReceipt(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
             const now = new Date().getTime();
