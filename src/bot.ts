@@ -36,9 +36,12 @@ export default class Bot {
       logger.debug('ignored self tweet')
       return
     }
+    if (tweet.retweeted_status !== undefined) {
+      logger.debug('ignored retweet')
+      return;
+    }
 
     // TODO: filter tweet.source by whitelist or blacklist
-    // TODO: ensure the tweet is intended (not RT, etc.)
 
     const parser = new Parser({ botName: this.screenName })
     const commands = parser.parse(tweet.text)
