@@ -38,7 +38,7 @@ export default class Bot {
     }
     if (tweet.retweeted_status !== undefined) {
       logger.debug('ignored retweet')
-      return;
+      return
     }
 
     // TODO: filter tweet.source by whitelist or blacklist
