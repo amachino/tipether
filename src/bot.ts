@@ -1,3 +1,5 @@
+import * as fs from 'fs'
+import * as path from 'path'
 import config from './config'
 import logger from './logger'
 import API from './api'
@@ -9,11 +11,13 @@ import { TokenData, TokenMap } from './token'
 export default class Bot {
 
   public readonly tokens: TokenMap
+  public readonly sources: string[]
   public readonly id: string = config.TWITTER_ID
   public readonly screenName: string = config.TWITTER_SCREEN_NAME
 
   constructor(tokens: TokenMap) {
     this.tokens = tokens
+    this.sources = this.loadTwitterSources('../sources')
   }
 
   public async start() {
@@ -31,6 +35,11 @@ export default class Bot {
     logger.info('app started')
   }
 
+  private loadTwitterSources(sourcesPath: string): string[] {
+    const sources = fs.readFileSync(path.join(__dirname, sourcesPath), { encoding: 'utf8' }).trim().split('\n')
+    return sources
+  }
+
   private handleTweet(tweet: Tweet) {
     if (tweet.user.id_str === this.id) {
       logger.debug('ignored self tweet')
@@ -40,8 +49,10 @@ export default class Bot {
       logger.debug('ignored retweet')
       return
     }
-
-    // TODO: filter tweet.source by whitelist or blacklist
+    if (this.sources.indexOf(tweet.source) === -1) {
+      logger.debug(`invalid source: ${tweet.source}`)
+      return
+    }
 
     const parser = new Parser({ botName: this.screenName })
     const commands = parser.parse(tweet.text)

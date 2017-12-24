@@ -8,6 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs = require("fs");
+const path = require("path");
 const config_1 = require("./config");
 const logger_1 = require("./logger");
 const api_1 = require("./api");
@@ -19,6 +21,7 @@ class Bot {
         this.id = config_1.default.TWITTER_ID;
         this.screenName = config_1.default.TWITTER_SCREEN_NAME;
         this.tokens = tokens;
+        this.sources = this.loadTwitterSources('../sources');
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -37,6 +40,10 @@ class Bot {
             logger_1.default.info('app started');
         });
     }
+    loadTwitterSources(sourcesPath) {
+        const sources = fs.readFileSync(path.join(__dirname, sourcesPath), { encoding: 'utf8' }).trim().split('\n');
+        return sources;
+    }
     handleTweet(tweet) {
         if (tweet.user.id_str === this.id) {
             logger_1.default.debug('ignored self tweet');
@@ -46,7 +53,10 @@ class Bot {
             logger_1.default.debug('ignored retweet');
             return;
         }
-        // TODO: filter tweet.source by whitelist or blacklist
+        if (this.sources.indexOf(tweet.source) === -1) {
+            logger_1.default.debug(`invalid source: ${tweet.source}`);
+            return;
+        }
         const parser = new parser_1.Parser({ botName: this.screenName });
         const commands = parser.parse(tweet.text);
         if (commands.length === 0) {
