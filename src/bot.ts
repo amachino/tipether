@@ -146,7 +146,7 @@ export default class Bot {
 
   private async handleTipETHCommand(obj: { tweet: Tweet, sender: User, receiver: User, amount: number, symbol: string }): Promise<any> {
     const tweet = obj.tweet, sender = obj.sender, receiver = obj.receiver, amount = obj.amount, symbol = obj.symbol
-    let amountInEth = Util.normalizeToEth(symbol, amount)
+    const amountInEth = Util.normalizeToEth(symbol, amount)
     if (amount <= 0 || amountInEth > this.tokens.ETH.maxWithdrawAmount) {
       await Twitter.postTweet({
         locale: sender.lang,
@@ -211,7 +211,7 @@ export default class Bot {
 
   private async handleWithdrawETHCommand(obj: { tweet: Tweet, sender: User, address: string, amount: number, symbol: string }): Promise<any> {
     const tweet = obj.tweet, sender = obj.sender, address = obj.address, amount = obj.amount, symbol = obj.symbol
-    let amountInEth = Util.normalizeToEth(symbol, amount)
+    const amountInEth = Util.normalizeToEth(symbol, amount)
     if (amount <= 0 || amountInEth > this.tokens.ETH.maxWithdrawAmount) {
       await Twitter.postTweet({ // this may fail due to tweet limit
         locale: sender.lang,
