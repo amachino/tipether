@@ -176,8 +176,8 @@ export default class Bot {
         phrase: 'Tip Transaction Error',
         data: {
           sender: sender.screen_name,
-          amount: amountInEth,
-          symbol: this.tokens.ETH.symbol
+          amount: amount,
+          symbol: symbol
         },
         replyTo: tweet.id_str
       })
@@ -201,8 +201,8 @@ export default class Bot {
       data: {
         sender: sender.screen_name,
         receiver: receiver.screen_name,
-        amount: amountInEth,
-        symbol: this.tokens.ETH.symbol,
+        amount: amount,
+        symbol: symbol,
         txId: result.txId
       },
       replyTo: tweet.id_str
@@ -241,8 +241,8 @@ export default class Bot {
         phrase: 'Withdraw Transaction Error',
         data: {
           sender: sender.screen_name,
-          amount: amountInEth,
-          symbol: this.tokens.ETH.symbol
+          amount: amount,
+          symbol: symbol
         },
         replyTo: tweet.id_str
       })
@@ -266,8 +266,8 @@ export default class Bot {
       data: {
         sender: sender.screen_name,
         address: address,
-        amount: amountInEth,
-        symbol: this.tokens.ETH.symbol,
+        amount: amount,
+        symbol: symbol,
         txId: result.txId
       },
       replyTo: tweet.id_str
