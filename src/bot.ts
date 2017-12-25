@@ -50,21 +50,29 @@ export default class Bot {
       return
     }
     if (this.sources.indexOf(tweet.source) === -1) {
-      logger.debug(`invalid source: ${tweet.source}`)
+      logger.info('invalid source: ', tweet.source)
       return
     }
 
+    let textToParse = tweet.text
+
+    // Reply Tweet
+    if (tweet.display_text_range !== undefined && typeof tweet.display_text_range[0] === 'number') {
+      logger.debug('display_text_range: ', tweet.display_text_range)
+      textToParse = textToParse.slice(tweet.display_text_range[0])
+    }
+
     const parser = new Parser({ botName: this.screenName })
-    const commands = parser.parse(tweet.text)
+    const commands = parser.parse(textToParse)
     if (commands.length === 0) {
-      logger.debug('command not found')
+      logger.info('command not found: ', textToParse)
       return
     }
 
     // TODO: accept multipule commands in one tweet
     const command = commands[0]
 
-    logger.debug('parsed command:', command)
+    logger.info('parsed command:', command)
 
     switch (command.type) {
       case CommandType.TIP: {

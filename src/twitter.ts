@@ -33,6 +33,7 @@ export interface Tweet {
   in_reply_to_screen_name?: string
   user: User
   retweeted_status?: Tweet
+  display_text_range?: object
 }
 
 export class Twitter {

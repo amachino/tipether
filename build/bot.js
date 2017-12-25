@@ -54,18 +54,24 @@ class Bot {
             return;
         }
         if (this.sources.indexOf(tweet.source) === -1) {
-            logger_1.default.debug(`invalid source: ${tweet.source}`);
+            logger_1.default.info('invalid source: ', tweet.source);
             return;
         }
+        let textToParse = tweet.text;
+        // Reply Tweet
+        if (tweet.display_text_range !== undefined && typeof tweet.display_text_range[0] === 'number') {
+            logger_1.default.debug('display_text_range: ', tweet.display_text_range);
+            textToParse = textToParse.slice(tweet.display_text_range[0]);
+        }
         const parser = new parser_1.Parser({ botName: this.screenName });
-        const commands = parser.parse(tweet.text);
+        const commands = parser.parse(textToParse);
         if (commands.length === 0) {
-            logger_1.default.debug('command not found');
+            logger_1.default.info('command not found: ', textToParse);
             return;
         }
         // TODO: accept multipule commands in one tweet
         const command = commands[0];
-        logger_1.default.debug('parsed command:', command);
+        logger_1.default.info('parsed command:', command);
         switch (command.type) {
             case parser_1.CommandType.TIP: {
                 return this.handleTipCommand({ tweet, command }).catch(err => logger_1.default.error(err));
