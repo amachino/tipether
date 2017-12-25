@@ -11,13 +11,13 @@ describe('Util', () => {
     })
 
     context('when args passed in Wei', () => {
-      it('does not normalize the args', () => {
+      it('normalizes the args', () => {
         assert.deepEqual(0.000000001, Util.normalizeToEth('Wei', 10000000000))
       })
     })
 
     context('when args passed in neither ETH nor Wei', () => {
-      it('does not normalize the args', () => {
+      it('throws an `Error`', () => {
         assert.throws(() => {
           Util.normalizeToEth('No Such Unit', 10000000000)
         }, 'Invalid symbol: should be either "ETH" or "Wei"')

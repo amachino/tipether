@@ -146,8 +146,8 @@ export default class Bot {
       await Twitter.postTweet({
         text: i18n.__('Tip Transaction Error', {
           sender: sender.screen_name,
-          amount: amountInEth,
-          symbol: this.tokens.ETH.symbol
+          amount: amount,
+          symbol: symbol
         }),
         replyTo: tweet.id_str
       })
@@ -169,8 +169,8 @@ export default class Bot {
       text: i18n.__('Tip Sent', {
         sender: sender.screen_name,
         receiver: receiver.screen_name,
-        amount: amountInEth,
-        symbol: this.tokens.ETH.symbol,
+        amount: amount,
+        symbol: symbol,
         txId: result.txId
       }),
       replyTo: tweet.id_str
@@ -200,8 +200,8 @@ export default class Bot {
       await Twitter.postTweet({
         text: i18n.__('Withdraw Transaction Error', {
           sender: sender.screen_name,
-          amount: amountInEth,
-          symbol: this.tokens.ETH.symbol
+          amount: amount,
+          symbol: symbol
         }),
         replyTo: tweet.id_str
       })
@@ -223,8 +223,8 @@ export default class Bot {
       text: i18n.__('Transaction Sent', {
         sender: sender.screen_name,
         address: address,
-        amount: amountInEth,
-        symbol: this.tokens.ETH.symbol,
+        amount: amount,
+        symbol: symbol,
         txId: result.txId
       }),
       replyTo: tweet.id_str
