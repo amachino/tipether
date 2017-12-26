@@ -16,6 +16,7 @@ const api_1 = require("./api");
 const receipt_1 = require("./receipt");
 const twitter_1 = require("./twitter");
 const parser_1 = require("./parser");
+const util_1 = require("./util");
 class Bot {
     constructor(tokens) {
         this.id = config_1.default.TWITTER_ID;
@@ -136,7 +137,8 @@ class Bot {
     handleTipETHCommand(obj) {
         return __awaiter(this, void 0, void 0, function* () {
             const tweet = obj.tweet, sender = obj.sender, receiver = obj.receiver, amount = obj.amount, symbol = obj.symbol;
-            if (amount <= 0 || amount > this.tokens.ETH.maxTipAmount) {
+            const amountInEth = util_1.default.normalizeToEth(symbol, amount);
+            if (amount <= 0 || amountInEth > this.tokens.ETH.maxWithdrawAmount) {
                 yield twitter_1.Twitter.postTweet({
                     locale: sender.lang,
                     phrase: 'Tip Limit Error',
@@ -149,10 +151,6 @@ class Bot {
                 });
                 throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxTipAmount}"`);
             }
-            if (symbol.toUpperCase() !== this.tokens.ETH.symbol) {
-                // TODO: accept WEI
-                throw new Error(`Invalid symbol: should be "ETH"`);
-            }
             const receipt = yield receipt_1.default.get(tweet.id_str);
             if (receipt !== null) {
                 throw new Error('The tweet has been processed already');
@@ -160,7 +158,7 @@ class Bot {
             const result = yield api_1.default.tipEther({
                 senderId: sender.id_str,
                 receiverId: receiver.id_str,
-                amount: amount
+                amount: amountInEth
             }).catch((err) => __awaiter(this, void 0, void 0, function* () {
                 yield twitter_1.Twitter.postTweet({
                     locale: sender.lang,
@@ -168,7 +166,7 @@ class Bot {
                     data: {
                         sender: sender.screen_name,
                         amount: amount,
-                        symbol: this.tokens.ETH.symbol
+                        symbol: symbol
                     },
                     replyTo: tweet.id_str
                 });
@@ -178,7 +176,7 @@ class Bot {
                 tweetId: tweet.id_str,
                 senderId: sender.id_str,
                 receiverId: receiver.id_str,
-                amount: amount,
+                amount: amountInEth,
                 symbol: this.tokens.ETH.symbol,
                 txId: result.txId
             });
@@ -190,7 +188,7 @@ class Bot {
                     sender: sender.screen_name,
                     receiver: receiver.screen_name,
                     amount: amount,
-                    symbol: this.tokens.ETH.symbol,
+                    symbol: symbol,
                     txId: result.txId
                 },
                 replyTo: tweet.id_str
@@ -200,7 +198,8 @@ class Bot {
     handleWithdrawETHCommand(obj) {
         return __awaiter(this, void 0, void 0, function* () {
             const tweet = obj.tweet, sender = obj.sender, address = obj.address, amount = obj.amount, symbol = obj.symbol;
-            if (amount <= 0 || amount > this.tokens.ETH.maxWithdrawAmount) {
+            const amountInEth = util_1.default.normalizeToEth(symbol, amount);
+            if (amount <= 0 || amountInEth > this.tokens.ETH.maxWithdrawAmount) {
                 yield twitter_1.Twitter.postTweet({
                     locale: sender.lang,
                     phrase: 'Withdraw Limit Error',
@@ -213,10 +212,6 @@ class Bot {
                 });
                 throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxWithdrawAmount}"`);
             }
-            if (symbol.toUpperCase() !== this.tokens.ETH.symbol) {
-                // TODO: accept WEI
-                throw new Error(`Invalid symbol: should be "ETH"`);
-            }
             const receipt = yield receipt_1.default.get(tweet.id_str);
             if (receipt !== null) {
                 throw new Error('The tweet has been processed already');
@@ -224,7 +219,7 @@ class Bot {
             const result = yield api_1.default.withdrawEther({
                 senderId: sender.id_str,
                 address: address,
-                amount: amount
+                amount: amountInEth
             }).catch((err) => __awaiter(this, void 0, void 0, function* () {
                 yield twitter_1.Twitter.postTweet({
                     locale: sender.lang,
@@ -232,7 +227,7 @@ class Bot {
                     data: {
                         sender: sender.screen_name,
                         amount: amount,
-                        symbol: this.tokens.ETH.symbol
+                        symbol: symbol
                     },
                     replyTo: tweet.id_str
                 });
@@ -242,7 +237,7 @@ class Bot {
                 tweetId: tweet.id_str,
                 senderId: sender.id_str,
                 receiverAddress: address,
-                amount: amount,
+                amount: amountInEth,
                 symbol: this.tokens.ETH.symbol,
                 txId: result.txId
             });
@@ -254,7 +249,7 @@ class Bot {
                     sender: sender.screen_name,
                     address: address,
                     amount: amount,
-                    symbol: this.tokens.ETH.symbol,
+                    symbol: symbol,
                     txId: result.txId
                 },
                 replyTo: tweet.id_str
