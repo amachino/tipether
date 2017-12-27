@@ -1,11 +1,12 @@
 {
-  "Tip Sent": "🎁 @{{sender}} sent {{amount}} {{symbol}} to @{{receiver}} 🎉",
-  "Transaction Sent": "@{{sender}} You sent {{amount}} {{symbol}} to {{address}}\nTransaction ID: {{txId}}",
-  "Show Balance": "@{{sender}} Your balance is {{balance}} {{symbol}}",
-  "Show Address": "@{{sender}} Your deposit address is:\n\n{{address}}\n\nSend ETH to this address.",
-  "Show Help": "@{{sender}} TIP: \"@{{botName}} tip @<username> (<amount> ETH)\"\nBALANCE: \"@{{botName}} balance\"\nDEPOSIT: \"@{{botName}} deposit\"\nWITHDRAW: \"@{{botName}} withdraw <amount> ETH <address>\"",
-  "Tip Limit Error": "@{{sender}} Maximum tip is currently {{limit}} {{symbol}}. Please try again with smaller amount.",
-  "Tip Transaction Error": "@{{sender}} Insufficient funds for {{amount}} {{symbol}} + gas. Please check your balance.",
-  "Withdraw Limit Error": "@{{sender}} Maximum withdrawal is currently {{limit}} {{symbol}}. Please try again with smaller amount.",
-  "Withdraw Transaction Error": "@{{sender}} Insufficient funds for {{amount}} {{symbol}} + gas. Please check your balance."
+  "Tip Sent": "@{{sender}} 🎁 @{{sender}} さんが @{{receiver}} さんに {{amount}} {{symbol}} を贈ったよ 🎉",
+  "Transaction Sent": "@{{sender}} {{amount}} {{symbol}} をアドレス {{address}} に送ったよ！\n\nTransaction ID: {{txId}}",
+  "Show Balance": "@{{sender}} {{sender}} さんの残高は {{balance}} {{symbol}} だよ！",
+  "Show Address": "@{{sender}} {{sender}} さんの入金用アドレスは\n\n{{address}}\n\nだよ。ここに ETH を送ってね。",
+  "Show Help": "@{{sender}} チップを贈る（カッコは省略可）：\n@{{botName}} tip @<ユーザー名> (<数量> ETH)\n\n残高を確認する：\n@{{botName}} balance\n\n入金アドレスを確認する：\n@{{botName}} deposit\n\n別アドレスに出金する：\n@{{botName}} withdraw <数量> ETH <アドレス>",
+  "Tip Limit Error": "@{{sender}} チップ上限額は現在 {{limit}} {{symbol}} なのです。これより少ない額で試してみてください。",
+  "Tip Transaction Error": "@{{sender}} {{amount}} {{symbol}} + gas を送るための残高が足りていません.. 残高を確認してみてください。",
+  "Withdraw Limit Error": "@{{sender}} 一度の出金上限額は現在 {{limit}} {{symbol}} なのです。これより少ない額で試してみてください。",
+  "Withdraw Transaction Error": "@{{sender}} {{amount}} {{symbol}} + gas を送るための残高が足りていません.. 残高を確認してみてください。",
+  "Thanks for Tip": "@{{sender}} ぼくにチップくれるの！？ ありがとう！！\n{{amount}} {{symbol}} を寄付用アドレスに入れさせてもらったよ！"
 }

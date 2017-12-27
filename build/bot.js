@@ -183,6 +183,21 @@ class Bot {
                 txId: result.txId
             });
             yield twitter_1.Twitter.postFavorite({ id: tweet.id_str });
+            // Tip to tipether
+            if (receiver.id_str === this.id) {
+                return twitter_1.Twitter.postTweet({
+                    locale: sender.lang,
+                    phrase: 'Thanks for Tip',
+                    data: {
+                        sender: sender.screen_name,
+                        receiver: receiver.screen_name,
+                        amount: amount,
+                        symbol: this.tokens.ETH.symbol,
+                        txId: result.txId
+                    },
+                    replyTo: tweet.id_str
+                });
+            }
             return twitter_1.Twitter.postTweet({
                 locale: receiver.lang,
                 phrase: 'Tip Sent',

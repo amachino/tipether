@@ -198,6 +198,22 @@ export default class Bot {
 
     await Twitter.postFavorite({ id: tweet.id_str })
 
+    // Tip to tipether
+    if (receiver.id_str === this.id) {
+      return Twitter.postTweet({ // this may fail due to tweet limit
+        locale: sender.lang,
+        phrase: 'Thanks for Tip',
+        data: {
+          sender: sender.screen_name,
+          receiver: receiver.screen_name,
+          amount: amount,
+          symbol: this.tokens.ETH.symbol,
+          txId: result.txId
+        },
+        replyTo: tweet.id_str
+      })
+    }
+
     return Twitter.postTweet({ // this may fail due to tweet limit
       locale: receiver.lang,
       phrase: 'Tip Sent',
