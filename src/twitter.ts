@@ -36,33 +36,74 @@ export interface Tweet {
   display_text_range?: object
 }
 
+export interface Message {
+  created_at: string
+  id: number
+  id_str: string
+  text: string
+  sender_id: number
+  sender_id_str: string
+  sender_screen_name: string
+  recipient_id: number
+  recipient_id_str: string
+  recipient_screen_name: string
+  sender: User
+  recipient: User
+}
+
 export class Twitter {
 
-  public static async trackTweet(keyword: string) {
-    const stream = await api.stream('statuses/filter', { track: keyword })
-    return stream
+  public static getTweetStream(obj: { track: string }) {
+    return api.stream('statuses/filter', { track: obj.track })
   }
 
-  public static async getUser(obj: { screenName: string} ): Promise<User|null> {
+  public static getUserStream() {
+    return api.stream('user')
+  }
+
+  public static async getUser(obj: { screenName: string }): Promise<User|null> {
     const result = await api.get('users/lookup', { screen_name: obj.screenName })
-    if (result && result.length > 0) {
-      return result[0] as User
+    const data = result.data
+    if (data && data.length > 0) {
+      return data[0] as User
     } else {
       return null
     }
   }
 
-  public static async postTweet({ locale, phrase, data, replyTo }: { locale: string, phrase: string, data?: any, replyTo?: string }): Promise<Tweet> {
+  public static async postTweet(obj: { locale: string, phrase: string, data?: any }): Promise<Tweet> {
     const result = await api.post('statuses/update', {
-      status: i18n.__({ phrase: phrase, locale: locale }, data),
-      in_reply_to_status_id: replyTo
+      status: i18n.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
     })
-    return result as Tweet
+    return result.data as Tweet
   }
 
-  public static async postFavorite(obj: { id: string} ): Promise<Tweet> {
+  public static async postReplyTweet(obj: { tweetId: string, username: string, locale: string, phrase: string, data?: any }): Promise<Tweet> {
+    const result = await api.post('statuses/update', {
+      status: `@${obj.username} ` + i18n.__({ phrase: obj.phrase, locale: obj.locale }, obj.data),
+      in_reply_to_status_id: obj.tweetId
+    })
+    return result.data as Tweet
+  }
+
+  public static async postFavorite(obj: { id: string }): Promise<Tweet> {
     const result = await api.post('favorites/create', { id: obj.id })
-    return result as Tweet
+    return result.data as Tweet
+  }
+
+  public static async postMessage(obj: { recipientId: string, locale: string, phrase: string, data?: any }): Promise<Message> {
+    const result = await api.post('direct_messages/events/new', {
+      event: {
+        type: 'message_create',
+        message_create: {
+          target: { recipient_id: obj.recipientId },
+          message_data: {
+            text: i18n.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+          }
+        }
+      }
+    })
+    return result.data as Message
   }
 
 }

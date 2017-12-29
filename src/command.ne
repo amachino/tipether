@@ -26,16 +26,16 @@ AnyCommand -> TipCommand {% id %}
             | DepositCommand {% id %}
             | HelpCommand {% id %}
 
-TipCommand -> __ "tip" __ Username {% d => ({ type: CommandType.TIP, username: d[3] }) %}
+TipCommand -> _ "tip" __ Username {% d => ({ type: CommandType.TIP, username: d[3] }) %}
             | TipCommand _ Amount {% d => Object.assign(d[0], d[2]) %}
 
-WithdrawCommand -> __ "withdraw" __ Amount __ Address  {% d => Object.assign({ type: CommandType.WITHDRAW, address: d[5] }, d[3]) %}
+WithdrawCommand -> _ "withdraw" __ Amount __ Address  {% d => Object.assign({ type: CommandType.WITHDRAW, address: d[5] }, d[3]) %}
 
-DepositCommand -> __ "deposit" {% d => ({ type: CommandType.DEPOSIT }) %}
+DepositCommand -> _ "deposit" {% d => ({ type: CommandType.DEPOSIT }) %}
 
-BalanceCommand -> __ "balance" {% d => ({ type: CommandType.BALANCE }) %}
+BalanceCommand -> _ "balance" {% d => ({ type: CommandType.BALANCE }) %}
 
-HelpCommand -> __ "help" {% d => ({ type: CommandType.HELP }) %}
+HelpCommand -> _ "help" {% d => ({ type: CommandType.HELP }) %}
 
 Amount -> Number _ Symbol {% d => ({ amount: d[0], symbol: d[2] }) %}
 

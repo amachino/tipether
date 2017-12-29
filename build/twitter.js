@@ -18,36 +18,61 @@ const api = new Twit({
     access_token_secret: config_1.default.TWITTER_ACCESS_TOKEN_SECRET
 });
 class Twitter {
-    static trackTweet(keyword) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const stream = yield api.stream('statuses/filter', { track: keyword });
-            return stream;
-        });
+    static getTweetStream(obj) {
+        return api.stream('statuses/filter', { track: obj.track });
+    }
+    static getUserStream() {
+        return api.stream('user');
     }
     static getUser(obj) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield api.get('users/lookup', { screen_name: obj.screenName });
-            if (result && result.length > 0) {
-                return result[0];
+            const data = result.data;
+            if (data && data.length > 0) {
+                return data[0];
             }
             else {
                 return null;
             }
         });
     }
-    static postTweet({ locale, phrase, data, replyTo }) {
+    static postTweet(obj) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield api.post('statuses/update', {
-                status: i18n_1.default.__({ phrase: phrase, locale: locale }, data),
-                in_reply_to_status_id: replyTo
+                status: i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
             });
-            return result;
+            return result.data;
+        });
+    }
+    static postReplyTweet(obj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield api.post('statuses/update', {
+                status: `@${obj.username} ` + i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data),
+                in_reply_to_status_id: obj.tweetId
+            });
+            return result.data;
         });
     }
     static postFavorite(obj) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield api.post('favorites/create', { id: obj.id });
-            return result;
+            return result.data;
+        });
+    }
+    static postMessage(obj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield api.post('direct_messages/events/new', {
+                event: {
+                    type: 'message_create',
+                    message_create: {
+                        target: { recipient_id: obj.recipientId },
+                        message_data: {
+                            text: i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+                        }
+                    }
+                }
+            });
+            return result.data;
         });
     }
 }

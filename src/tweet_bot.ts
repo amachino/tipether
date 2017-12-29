@@ -8,7 +8,7 @@ import { Twitter, Tweet, User } from './twitter'
 import { Parser, Command, CommandType } from './parser'
 import { TokenData, TokenMap } from './token'
 
-export default class Bot {
+export default class TweetBot {
 
   public readonly tokens: TokenMap
   public readonly sources: string[]
@@ -21,7 +21,7 @@ export default class Bot {
   }
 
   public async start() {
-    const stream = await Twitter.trackTweet(this.screenName)
+    const stream = Twitter.getTweetStream({ track: this.screenName })
     stream.on('tweet', tweet => {
       try {
         this.handleTweet(tweet)
@@ -32,7 +32,7 @@ export default class Bot {
     stream.on('error', error => {
       logger.error(error)
     })
-    logger.info('app started')
+    logger.info('TweetBot started')
   }
 
   private loadTwitterSources(sourcesPath: string): string[] {
@@ -50,45 +50,37 @@ export default class Bot {
       return
     }
     if (this.sources.indexOf(tweet.source) === -1) {
-      logger.info('invalid source: ', tweet.source)
+      logger.info('invalid source:', tweet.source)
       return
     }
 
-    let textToParse = tweet.text
-
-    // Reply Tweet
-    if (tweet.display_text_range !== undefined && typeof tweet.display_text_range[0] === 'number') {
-      logger.debug('display_text_range: ', tweet.display_text_range)
-      textToParse = textToParse.slice(tweet.display_text_range[0])
-    }
-
-    const parser = new Parser({ botName: this.screenName })
-    const commands = parser.parse(textToParse)
+    const prefix = `@${this.screenName} `
+    const parser = new Parser({ prefix })
+    const commands = parser.parseTweet(tweet)
     if (commands.length === 0) {
-      logger.info('command not found: ', textToParse)
+      logger.info('tweet command not found:', tweet.text)
       return
     }
 
-    // TODO: accept multipule commands in one tweet
     const command = commands[0]
 
-    logger.info('parsed command:', command)
+    logger.info('parsed tweet command:', command)
 
     switch (command.type) {
       case CommandType.TIP: {
-        return this.handleTipCommand({ tweet, command }).catch(err => logger.error(err))
+        return this.handleTip({ tweet, command }).catch(err => logger.error(err))
       }
       case CommandType.WITHDRAW: {
-        return this.handleWithdrawCommand({ tweet, command }).catch(err => logger.error(err))
+        return this.handleWithdraw({ tweet, command }).catch(err => logger.error(err))
       }
       case CommandType.DEPOSIT: {
-        return this.handleDepositCommand({ tweet }).catch(err => logger.error(err))
+        return this.handleDeposit({ tweet }).catch(err => logger.error(err))
       }
       case CommandType.BALANCE: {
-        return this.handleBalanceCommand({ tweet }).catch(err => logger.error(err))
+        return this.handleBalance({ tweet }).catch(err => logger.error(err))
       }
       case CommandType.HELP: {
-        return this.handleHelpCommand({ tweet }).catch(err => logger.error(err))
+        return this.handleHelp({ tweet }).catch(err => logger.error(err))
       }
       default: {
         return
@@ -96,7 +88,7 @@ export default class Bot {
     }
   }
 
-  private async handleTipCommand(obj: { tweet: Tweet, command: Command }): Promise<any> {
+  private async handleTip(obj: { tweet: Tweet, command: Command }): Promise<any> {
     const tweet = obj.tweet, command = obj.command
     const sender: User = tweet.user
 
@@ -120,10 +112,10 @@ export default class Bot {
       throw new Error('no such user')
     }
 
-    return this.handleTipETHCommand({ tweet, sender, receiver, amount, symbol })
+    return this.handleTipEther({ tweet, sender, receiver, amount, symbol })
   }
 
-  private async handleWithdrawCommand(obj: { tweet: Tweet, command: Command }): Promise<any> {
+  private async handleWithdraw(obj: { tweet: Tweet, command: Command }): Promise<any> {
     const tweet = obj.tweet, command = obj.command
     const sender: User = tweet.user
     const type = command.type, address = command.address, amount = command.amount, symbol = command.symbol
@@ -140,27 +132,82 @@ export default class Bot {
       throw new Error('invalid amount')
     }
 
-    return this.handleWithdrawETHCommand({ tweet, sender, address, amount, symbol })
+    return this.handleWithdrawEther({ tweet, sender, address, amount, symbol })
   }
 
-  private async handleTipETHCommand(obj: { tweet: Tweet, sender: User, receiver: User, amount: number, symbol: string }): Promise<any> {
+  private async handleDeposit(obj: { tweet: Tweet }): Promise<any> {
+    const tweet = obj.tweet
+    const user: User = tweet.user
+
+    const result = await API.getAddress({ id: user.id_str })
+    const address = result.address
+
+    return Twitter.postReplyTweet({
+      tweetId: tweet.id_str,
+      username: user.screen_name,
+      locale: user.lang,
+      phrase: 'Show Address',
+      data: {
+        sender: user.screen_name,
+        address: address
+      }
+    })
+  }
+
+  private async handleBalance(obj: { tweet: Tweet }): Promise<any> {
+    const tweet = obj.tweet
+    const user: User = tweet.user
+
+    const result = await API.getBalance({ id: user.id_str })
+    const balance = result.balance
+
+    return Twitter.postReplyTweet({
+      tweetId: tweet.id_str,
+      username: user.screen_name,
+      locale: user.lang,
+      phrase: 'Show Balance',
+      data: {
+        sender: user.screen_name,
+        balance: balance,
+        symbol: this.tokens.ETH.symbol
+      }
+    })
+  }
+
+  private async handleHelp(obj: { tweet: Tweet }): Promise<any> {
+    const tweet = obj.tweet
+    const user: User = tweet.user
+
+    return Twitter.postReplyTweet({
+      tweetId: tweet.id_str,
+      username: user.screen_name,
+      locale: user.lang,
+      phrase: 'Show Tweet Help',
+      data: {
+        sender: user.screen_name,
+        botName: this.screenName
+      }
+    })
+  }
+
+  private async handleTipEther(obj: { tweet: Tweet, sender: User, receiver: User, amount: number, symbol: string }): Promise<any> {
     const tweet = obj.tweet, sender = obj.sender, receiver = obj.receiver, amount = obj.amount, symbol = obj.symbol
     if (amount <= 0 || amount > this.tokens.ETH.maxTipAmount) {
-      await Twitter.postTweet({
+      await Twitter.postReplyTweet({
+        tweetId: tweet.id_str,
+        username: sender.screen_name,
         locale: sender.lang,
         phrase: 'Tip Limit Error',
         data: {
           sender: sender.screen_name,
           limit: this.tokens.ETH.maxTipAmount,
           symbol: this.tokens.ETH.symbol
-        },
-        replyTo: tweet.id_str
+        }
       })
       throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxTipAmount}"`)
     }
 
     if (symbol.toUpperCase() !== this.tokens.ETH.symbol) {
-      // TODO: accept WEI
       throw new Error(`Invalid symbol: should be "ETH"`)
     }
 
@@ -174,15 +221,16 @@ export default class Bot {
       receiverId: receiver.id_str,
       amount: amount
     }).catch(async err => {
-      await Twitter.postTweet({
+      await Twitter.postReplyTweet({
+        tweetId: tweet.id_str,
+        username: sender.screen_name,
         locale: sender.lang,
         phrase: 'Tip Transaction Error',
         data: {
           sender: sender.screen_name,
           amount: amount,
           symbol: this.tokens.ETH.symbol
-        },
-        replyTo: tweet.id_str
+        }
       })
       throw err
     })
@@ -200,7 +248,9 @@ export default class Bot {
 
     // Tip to tipether
     if (receiver.id_str === this.id) {
-      return Twitter.postTweet({ // this may fail due to tweet limit
+      return Twitter.postReplyTweet({
+        tweetId: tweet.id_str,
+        username: sender.screen_name,
         locale: sender.lang,
         phrase: 'Thanks for Tip',
         data: {
@@ -209,43 +259,42 @@ export default class Bot {
           amount: amount,
           symbol: this.tokens.ETH.symbol,
           txId: result.txId
-        },
-        replyTo: tweet.id_str
+        }
       })
     }
 
-    return Twitter.postTweet({ // this may fail due to tweet limit
+    return Twitter.postReplyTweet({
+      tweetId: tweet.id_str,
+      username: sender.screen_name,
       locale: receiver.lang,
-      phrase: 'Tip Sent',
+      phrase: 'Tip Tweet',
       data: {
         sender: sender.screen_name,
         receiver: receiver.screen_name,
         amount: amount,
-        symbol: this.tokens.ETH.symbol,
-        txId: result.txId
-      },
-      replyTo: tweet.id_str
+        symbol: this.tokens.ETH.symbol
+      }
     })
   }
 
-  private async handleWithdrawETHCommand(obj: { tweet: Tweet, sender: User, address: string, amount: number, symbol: string }): Promise<any> {
+  private async handleWithdrawEther(obj: { tweet: Tweet, sender: User, address: string, amount: number, symbol: string }): Promise<any> {
     const tweet = obj.tweet, sender = obj.sender, address = obj.address, amount = obj.amount, symbol = obj.symbol
     if (amount <= 0 || amount > this.tokens.ETH.maxWithdrawAmount) {
-      await Twitter.postTweet({ // this may fail due to tweet limit
+      await Twitter.postReplyTweet({
+        tweetId: tweet.id_str,
+        username: sender.screen_name,
         locale: sender.lang,
         phrase: 'Withdraw Limit Error',
         data: {
           sender: sender.screen_name,
           limit: this.tokens.ETH.maxWithdrawAmount,
           symbol: this.tokens.ETH.symbol
-        },
-        replyTo: tweet.id_str
+        }
       })
       throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxWithdrawAmount}"`)
     }
 
     if (symbol.toUpperCase() !== this.tokens.ETH.symbol) {
-      // TODO: accept WEI
       throw new Error(`Invalid symbol: should be "ETH"`)
     }
 
@@ -259,15 +308,16 @@ export default class Bot {
       address: address,
       amount: amount
     }).catch(async err => {
-      await Twitter.postTweet({
+      await Twitter.postReplyTweet({
+        tweetId: tweet.id_str,
+        username: sender.screen_name,
         locale: sender.lang,
         phrase: 'Withdraw Transaction Error',
         data: {
           sender: sender.screen_name,
           amount: amount,
           symbol: this.tokens.ETH.symbol
-        },
-        replyTo: tweet.id_str
+        }
       })
       throw err
     })
@@ -283,7 +333,9 @@ export default class Bot {
 
     await Twitter.postFavorite({ id: tweet.id_str })
 
-    return Twitter.postTweet({ // this may fail due to tweet limit
+    return Twitter.postReplyTweet({
+      tweetId: tweet.id_str,
+      username: sender.screen_name,
       locale: sender.lang,
       phrase: 'Transaction Sent',
       data: {
@@ -292,60 +344,7 @@ export default class Bot {
         amount: amount,
         symbol: this.tokens.ETH.symbol,
         txId: result.txId
-      },
-      replyTo: tweet.id_str
-    })
-  }
-
-  private async handleDepositCommand(obj: { tweet: Tweet }): Promise<any> {
-    const tweet = obj.tweet
-    const user: User = tweet.user
-
-    const result = await API.getAddress({ id: user.id_str })
-    const address = result.address
-
-    return Twitter.postTweet({ // this may fail due to tweet limit
-      locale: user.lang,
-      phrase: 'Show Address',
-      data: {
-        sender: user.screen_name,
-        address: address
-      },
-      replyTo: tweet.id_str
-    })
-  }
-
-  private async handleBalanceCommand(obj: { tweet: Tweet }): Promise<any> {
-    const tweet = obj.tweet
-    const user: User = tweet.user
-
-    const result = await API.getBalance({ id: user.id_str })
-    const balance = result.balance
-
-    return Twitter.postTweet({
-      locale: user.lang,
-      phrase: 'Show Balance',
-      data: {
-        sender: user.screen_name,
-        balance: balance,
-        symbol: this.tokens.ETH.symbol
-      },
-      replyTo: tweet.id_str
-    })
-  }
-
-  private async handleHelpCommand(obj: { tweet: Tweet }): Promise<any> {
-    const tweet = obj.tweet
-    const user: User = tweet.user
-
-    return Twitter.postTweet({
-      locale: user.lang,
-      phrase: 'Show Help',
-      data: {
-        sender: user.screen_name,
-        botName: this.screenName
-      },
-      replyTo: tweet.id_str
+      }
     })
   }
 

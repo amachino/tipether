@@ -18,7 +18,7 @@ export default class Receipt {
     }
   }
 
-  public static async createTipReceipt(id: string, data: { tweetId: string, senderId: string, receiverId: string, amount: number, symbol: string, txId: string }) {
+  public static async createTipReceipt(id: string, data: { tweetId?: string, messageId?: string, senderId: string, receiverId: string, amount: number, symbol: string, txId: string }) {
     const now = new Date().getTime()
     return store.collection(this.collection).doc(id).set({
       type: Type.TIP,
@@ -27,7 +27,7 @@ export default class Receipt {
     })
   }
 
-  public static async createWithdrawReceipt(id: string, data: { tweetId: string, senderId: string, receiverAddress: string, amount: number, symbol: string, txId: string }) {
+  public static async createWithdrawReceipt(id: string, data: { tweetId?: string, messageId?: string, senderId: string, receiverAddress: string, amount: number, symbol: string, txId: string }) {
     const now = new Date().getTime()
     return store.collection(this.collection).doc(id).set({
       type: Type.WITHDRAW,
