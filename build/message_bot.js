@@ -236,7 +236,8 @@ class MessageBot {
                     symbol: this.tokens.ETH.symbol
                 }
             });
-            return twitter_1.Twitter.postTweet({
+            return twitter_1.Twitter.postMentionTweet({
+                username: receiver.screen_name,
                 locale: sender.lang,
                 phrase: 'Tip Tweet',
                 data: {

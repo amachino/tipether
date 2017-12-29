@@ -78,6 +78,13 @@ export class Twitter {
     return result.data as Tweet
   }
 
+  public static async postMentionTweet(obj: { username: string, locale: string, phrase: string, data?: any }): Promise<Tweet> {
+    const result = await api.post('statuses/update', {
+      status: `@${obj.username} \n` + i18n.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+    })
+    return result.data as Tweet
+  }
+
   public static async postReplyTweet(obj: { tweetId: string, username: string, locale: string, phrase: string, data?: any }): Promise<Tweet> {
     const result = await api.post('statuses/update', {
       status: `@${obj.username} ` + i18n.__({ phrase: obj.phrase, locale: obj.locale }, obj.data),

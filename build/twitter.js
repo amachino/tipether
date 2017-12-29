@@ -44,6 +44,14 @@ class Twitter {
             return result.data;
         });
     }
+    static postMentionTweet(obj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield api.post('statuses/update', {
+                status: `@${obj.username} \n` + i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+            });
+            return result.data;
+        });
+    }
     static postReplyTweet(obj) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield api.post('statuses/update', {

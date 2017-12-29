@@ -250,7 +250,8 @@ export default class MessageBot {
       }
     })
 
-    return Twitter.postTweet({
+    return Twitter.postMentionTweet({
+      username: receiver.screen_name,
       locale: sender.lang,
       phrase: 'Tip Tweet',
       data: {
