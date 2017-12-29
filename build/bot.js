@@ -26,9 +26,9 @@ class Bot {
     start() {
         return __awaiter(this, void 0, void 0, function* () {
             const stream = yield twitter_1.Twitter.trackTweet(this.screenName);
-            stream.on('data', data => {
+            stream.on('tweet', tweet => {
                 try {
-                    this.handleTweet(data);
+                    this.handleTweet(tweet);
                 }
                 catch (e) {
                     logger_1.default.error(e);

@@ -1,11 +1,11 @@
-import * as TwitterAPI from 'twitter'
+import * as Twit from 'twit'
 import config from './config'
 import i18n from './i18n'
 
-const api = new TwitterAPI({
+const api = new Twit({
   consumer_key: config.TWITTER_CONSUMER_KEY,
   consumer_secret: config.TWITTER_CONSUMER_SECRET,
-  access_token_key: config.TWITTER_ACCESS_TOKEN_KEY,
+  access_token: config.TWITTER_ACCESS_TOKEN,
   access_token_secret: config.TWITTER_ACCESS_TOKEN_SECRET
 })
 

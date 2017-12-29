@@ -22,9 +22,9 @@ export default class Bot {
 
   public async start() {
     const stream = await Twitter.trackTweet(this.screenName)
-    stream.on('data', data => {
+    stream.on('tweet', tweet => {
       try {
-        this.handleTweet(data)
+        this.handleTweet(tweet)
       } catch (e) {
         logger.error(e)
       }

@@ -8,13 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const TwitterAPI = require("twitter");
+const Twit = require("twit");
 const config_1 = require("./config");
 const i18n_1 = require("./i18n");
-const api = new TwitterAPI({
+const api = new Twit({
     consumer_key: config_1.default.TWITTER_CONSUMER_KEY,
     consumer_secret: config_1.default.TWITTER_CONSUMER_SECRET,
-    access_token_key: config_1.default.TWITTER_ACCESS_TOKEN_KEY,
+    access_token: config_1.default.TWITTER_ACCESS_TOKEN,
     access_token_secret: config_1.default.TWITTER_ACCESS_TOKEN_SECRET
 });
 class Twitter {
