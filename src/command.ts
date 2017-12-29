@@ -1,6 +1,11 @@
 // Generated automatically by nearley
 // http://github.com/Hardmath123/nearley
 function id(d:any[]):any {return d[0];}
+declare var tip:any;
+declare var withdraw:any;
+declare var deposit:any;
+declare var balance:any;
+declare var help:any;
 declare var eth:any;
 declare var address:any;
 declare var username:any;
@@ -16,8 +21,12 @@ const lexer = moo.compile({
   address: /0x[0-9a-fA-F]{40}/,
   username: /@[0-9a-zA-Z_]{1,15}/,
   number: /(?:[1-9][0-9]*|0)(?:\.[0-9]+)?/,
-  eth: /(?:ETH|eth)/,
-  command: ['tip', 'withdraw', 'deposit', 'balance', 'help'],
+  eth: /[eE]ther|ETH|[eE]th/,
+  tip: /[tT]ip/,
+  withdraw: /[wW]ithdraw/,
+  deposit: /[dD]eposit/,
+  balance: /[bB]alance/,
+  help: /[hH]elp/,
   any: /.+/
 })
 export interface Token {value:any; [key: string]:any};
@@ -33,12 +42,12 @@ export var ParserRules:NearleyRule[] = [
     {"name": "AnyCommand", "symbols": ["BalanceCommand"], "postprocess": id},
     {"name": "AnyCommand", "symbols": ["DepositCommand"], "postprocess": id},
     {"name": "AnyCommand", "symbols": ["HelpCommand"], "postprocess": id},
-    {"name": "TipCommand", "symbols": ["_", {"literal":"tip"}, "__", "Username"], "postprocess": d => ({ type: CommandType.TIP, username: d[3] })},
+    {"name": "TipCommand", "symbols": ["_", (lexer.has("tip") ? {type: "tip"} : tip), "__", "Username"], "postprocess": d => ({ type: CommandType.TIP, username: d[3] })},
     {"name": "TipCommand", "symbols": ["TipCommand", "_", "Amount"], "postprocess": d => Object.assign(d[0], d[2])},
-    {"name": "WithdrawCommand", "symbols": ["_", {"literal":"withdraw"}, "__", "Amount", "__", "Address"], "postprocess": d => Object.assign({ type: CommandType.WITHDRAW, address: d[5] }, d[3])},
-    {"name": "DepositCommand", "symbols": ["_", {"literal":"deposit"}], "postprocess": d => ({ type: CommandType.DEPOSIT })},
-    {"name": "BalanceCommand", "symbols": ["_", {"literal":"balance"}], "postprocess": d => ({ type: CommandType.BALANCE })},
-    {"name": "HelpCommand", "symbols": ["_", {"literal":"help"}], "postprocess": d => ({ type: CommandType.HELP })},
+    {"name": "WithdrawCommand", "symbols": ["_", (lexer.has("withdraw") ? {type: "withdraw"} : withdraw), "__", "Amount", "__", "Address"], "postprocess": d => Object.assign({ type: CommandType.WITHDRAW, address: d[5] }, d[3])},
+    {"name": "DepositCommand", "symbols": ["_", (lexer.has("deposit") ? {type: "deposit"} : deposit)], "postprocess": d => ({ type: CommandType.DEPOSIT })},
+    {"name": "BalanceCommand", "symbols": ["_", (lexer.has("balance") ? {type: "balance"} : balance)], "postprocess": d => ({ type: CommandType.BALANCE })},
+    {"name": "HelpCommand", "symbols": ["_", (lexer.has("help") ? {type: "help"} : help)], "postprocess": d => ({ type: CommandType.HELP })},
     {"name": "Amount", "symbols": ["Number", "_", "Symbol"], "postprocess": d => ({ amount: d[0], symbol: d[2] })},
     {"name": "Symbol", "symbols": [(lexer.has("eth") ? {type: "eth"} : eth)], "postprocess": d => 'ETH'},
     {"name": "Address", "symbols": [(lexer.has("address") ? {type: "address"} : address)], "postprocess": d => d[0].value},

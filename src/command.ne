@@ -9,8 +9,12 @@ const lexer = moo.compile({
   address: /0x[0-9a-fA-F]{40}/,
   username: /@[0-9a-zA-Z_]{1,15}/,
   number: /(?:[1-9][0-9]*|0)(?:\.[0-9]+)?/,
-  eth: /(?:ETH|eth)/,
-  command: ['tip', 'withdraw', 'deposit', 'balance', 'help'],
+  eth: /[eE]ther|ETH|[eE]th/,
+  tip: /[tT]ip/,
+  withdraw: /[wW]ithdraw/,
+  deposit: /[dD]eposit/,
+  balance: /[bB]alance/,
+  help: /[hH]elp/,
   any: /.+/
 })
 %}
@@ -26,16 +30,16 @@ AnyCommand -> TipCommand {% id %}
             | DepositCommand {% id %}
             | HelpCommand {% id %}
 
-TipCommand -> _ "tip" __ Username {% d => ({ type: CommandType.TIP, username: d[3] }) %}
+TipCommand -> _ %tip __ Username {% d => ({ type: CommandType.TIP, username: d[3] }) %}
             | TipCommand _ Amount {% d => Object.assign(d[0], d[2]) %}
 
-WithdrawCommand -> _ "withdraw" __ Amount __ Address  {% d => Object.assign({ type: CommandType.WITHDRAW, address: d[5] }, d[3]) %}
+WithdrawCommand -> _ %withdraw __ Amount __ Address  {% d => Object.assign({ type: CommandType.WITHDRAW, address: d[5] }, d[3]) %}
 
-DepositCommand -> _ "deposit" {% d => ({ type: CommandType.DEPOSIT }) %}
+DepositCommand -> _ %deposit {% d => ({ type: CommandType.DEPOSIT }) %}
 
-BalanceCommand -> _ "balance" {% d => ({ type: CommandType.BALANCE }) %}
+BalanceCommand -> _ %balance {% d => ({ type: CommandType.BALANCE }) %}
 
-HelpCommand -> _ "help" {% d => ({ type: CommandType.HELP }) %}
+HelpCommand -> _ %help {% d => ({ type: CommandType.HELP }) %}
 
 Amount -> Number _ Symbol {% d => ({ amount: d[0], symbol: d[2] }) %}
 
