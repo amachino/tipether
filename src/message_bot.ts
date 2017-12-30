@@ -17,18 +17,33 @@ export default class MessageBot {
   }
 
   public async start() {
-    const stream = Twitter.getUserStream()
-    stream.on('direct_message', message => {
-      try {
+    try {
+      const stream = Twitter.getUserStream()
+      stream.on('direct_message', message => {
         this.handleMessage(message.direct_message)
-      } catch (e) {
-        logger.error(e)
+      })
+      stream.on('follow', event => {
+        this.handleFollow(event.source)
+      })
+      stream.on('error', error => {
+        logger.error(error)
+      })
+      logger.info('MessageBot started')
+    } catch (e) {
+      logger.error(e)
+    }
+  }
+
+  private async handleFollow(user: User) {
+    return Twitter.postMessage({
+      recipientId: user.id_str,
+      locale: user.lang,
+      phrase: 'Show Welcome Message',
+      data: {
+        sender: user.screen_name,
+        botName: this.screenName
       }
     })
-    stream.on('error', error => {
-      logger.error(error)
-    })
-    logger.info('MessageBot started')
   }
 
   private handleMessage(message: Message) {

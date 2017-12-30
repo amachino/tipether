@@ -25,19 +25,19 @@ class TweetBot {
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
-            const stream = twitter_1.Twitter.getTweetStream({ track: this.screenName });
-            stream.on('tweet', tweet => {
-                try {
+            try {
+                const stream = twitter_1.Twitter.getTweetStream({ track: this.screenName });
+                stream.on('tweet', tweet => {
                     this.handleTweet(tweet);
-                }
-                catch (e) {
-                    logger_1.default.error(e);
-                }
-            });
-            stream.on('error', error => {
-                logger_1.default.error(error);
-            });
-            logger_1.default.info('TweetBot started');
+                });
+                stream.on('error', error => {
+                    logger_1.default.error(error);
+                });
+                logger_1.default.info('TweetBot started');
+            }
+            catch (e) {
+                logger_1.default.error(e);
+            }
         });
     }
     loadTwitterSources(sourcesPath) {

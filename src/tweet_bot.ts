@@ -21,18 +21,18 @@ export default class TweetBot {
   }
 
   public async start() {
-    const stream = Twitter.getTweetStream({ track: this.screenName })
-    stream.on('tweet', tweet => {
-      try {
+    try {
+      const stream = Twitter.getTweetStream({ track: this.screenName })
+      stream.on('tweet', tweet => {
         this.handleTweet(tweet)
-      } catch (e) {
-        logger.error(e)
-      }
-    })
-    stream.on('error', error => {
-      logger.error(error)
-    })
-    logger.info('TweetBot started')
+      })
+      stream.on('error', error => {
+        logger.error(error)
+      })
+      logger.info('TweetBot started')
+    } catch (e) {
+      logger.error(e)
+    }
   }
 
   private loadTwitterSources(sourcesPath: string): string[] {

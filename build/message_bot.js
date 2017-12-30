@@ -22,19 +22,35 @@ class MessageBot {
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
-            const stream = twitter_1.Twitter.getUserStream();
-            stream.on('direct_message', message => {
-                try {
+            try {
+                const stream = twitter_1.Twitter.getUserStream();
+                stream.on('direct_message', message => {
                     this.handleMessage(message.direct_message);
-                }
-                catch (e) {
-                    logger_1.default.error(e);
+                });
+                stream.on('follow', event => {
+                    this.handleFollow(event.source);
+                });
+                stream.on('error', error => {
+                    logger_1.default.error(error);
+                });
+                logger_1.default.info('MessageBot started');
+            }
+            catch (e) {
+                logger_1.default.error(e);
+            }
+        });
+    }
+    handleFollow(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return twitter_1.Twitter.postMessage({
+                recipientId: user.id_str,
+                locale: user.lang,
+                phrase: 'Show Welcome Message',
+                data: {
+                    sender: user.screen_name,
+                    botName: this.screenName
                 }
             });
-            stream.on('error', error => {
-                logger_1.default.error(error);
-            });
-            logger_1.default.info('MessageBot started');
         });
     }
     handleMessage(message) {

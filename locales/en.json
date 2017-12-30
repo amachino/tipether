@@ -6,6 +6,7 @@
   "Show Address": "Your deposit address is:\n\n{{address}}\n\nSend ETH to this address.",
   "Show Tweet Help": "Send tip:\n@{{botName}} tip @<username> (<amount> ETH)\n\nShow balance:\n@{{botName}} balance\n\nShow deposit address:\n@{{botName}} deposit\n\nWithdraw to address:\n@{{botName}} withdraw <amount> ETH <address>",
   "Show Message Help": "Send tip:\ntip @<username> (<amount> ETH)\n\nShow balance:\nbalance\n\nShow deposit address:\ndeposit\n\nWithdraw to address:\nwithdraw <amount> ETH <address>",
+  "Show Welcome Message": "Thank you for following!\n\nPlease message “help” here to check commands!",
   "Tip Limit Error": "Maximum tip is currently {{limit}} {{symbol}}. Please try again with smaller amount.",
   "Tip Transaction Error": "Insufficient funds for {{amount}} {{symbol}} + gas.. Please check your balance.",
   "Withdraw Limit Error": "Maximum withdrawal is currently {{limit}} {{symbol}}. Please try again with smaller amount.",
