@@ -4,7 +4,7 @@
 You can send your ETH to anyone on Twitter, even if the user has not registered for tipether.
 
 
-# Commands
+# Tweet Commands
 
 Just tweet commands below to use tipether!
 
@@ -15,6 +15,18 @@ Command | Description
 `@tipether tip @<username> <amount> ETH` | Send `amount` ETH to `username`
 `@tipether withdraw <amount> ETH <address>` | Send `amount` ETH to `addrsss`
 `@tipether help` | Show help
+
+# DM Commands
+
+You can also use commands via direct messages.
+
+Command | Description
+:-- | :--
+`deposit` | Show your deposit address
+`balance` | Show your current balance
+`tip @<username> <amount> ETH` | Send `amount` ETH to `username`
+`withdraw <amount> ETH <address>` | Send `amount` ETH to `addrsss`
+`help` | Show help
 
 # Notes
 
