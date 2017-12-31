@@ -93,6 +93,37 @@ export class Twitter {
     return result.data as Tweet
   }
 
+  public static async postTweetWithMedia(obj: { mediaPath: string, locale: string, phrase: string, data?: any }): Promise<any> {
+    return new Promise((resolve, reject) => {
+      api.postMediaChunked({ file_path: obj.mediaPath }, async (err, data, response) => {
+        if (err) {
+          reject(err)
+        }
+        const result = await api.post('statuses/update', {
+          media_ids: [data.media_id_string],
+          status: i18n.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+        })
+        resolve(result.data)
+      })
+    })
+  }
+
+  public static async postReplyTweetWithMedia(obj: { tweetId: string, username: string, mediaPath: string, locale: string, phrase: string, data?: any }): Promise<any> {
+    return new Promise((resolve, reject) => {
+      api.postMediaChunked({ file_path: obj.mediaPath }, async (err, data, response) => {
+        if (err) {
+          reject(err)
+        }
+        const result = await api.post('statuses/update', {
+          in_reply_to_status_id: obj.tweetId,
+          media_ids: [data.media_id_string],
+          status: `@${obj.username} ` + i18n.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+        })
+        resolve(result.data)
+      })
+    })
+  }
+
   public static async postFavorite(obj: { id: string }): Promise<Tweet> {
     const result = await api.post('favorites/create', { id: obj.id })
     return result.data as Tweet

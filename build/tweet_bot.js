@@ -70,6 +70,9 @@ class TweetBot {
             case parser_1.CommandType.TIP: {
                 return this.handleTip({ tweet, command }).catch(err => logger_1.default.error(err));
             }
+            case parser_1.CommandType.OTOSHIDAMA: {
+                return this.handleOtoshidama({ tweet, command }).catch(err => logger_1.default.error(err));
+            }
             case parser_1.CommandType.WITHDRAW: {
                 return this.handleWithdraw({ tweet, command }).catch(err => logger_1.default.error(err));
             }
@@ -108,6 +111,104 @@ class TweetBot {
                 throw new Error('no such user');
             }
             return this.handleTipEther({ tweet, sender, receiver, amount, symbol });
+        });
+    }
+    handleOtoshidama(obj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const tweet = obj.tweet, command = obj.command;
+            const sender = tweet.user;
+            const type = command.type;
+            if (type !== parser_1.CommandType.OTOSHIDAMA) {
+                throw new Error('invalid command type');
+            }
+            let amount = command.amount;
+            if (typeof amount !== 'number') {
+                amount = 0.01;
+            }
+            let symbol = command.symbol;
+            if (typeof symbol !== 'string') {
+                symbol = this.tokens.ETH.symbol;
+            }
+            const receiver = yield twitter_1.Twitter.getUser({ screenName: command.username });
+            if (!receiver) {
+                throw new Error('no such user');
+            }
+            if (amount <= 0 || amount > this.tokens.ETH.maxTipAmount) {
+                yield twitter_1.Twitter.postReplyTweet({
+                    tweetId: tweet.id_str,
+                    username: sender.screen_name,
+                    locale: sender.lang,
+                    phrase: 'OTOSHIDAMA Limit Error',
+                    data: {
+                        sender: sender.screen_name,
+                        limit: this.tokens.ETH.maxTipAmount,
+                        symbol: this.tokens.ETH.symbol
+                    }
+                });
+                throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxTipAmount}"`);
+            }
+            if (symbol.toUpperCase() !== this.tokens.ETH.symbol) {
+                throw new Error(`Invalid symbol: should be "ETH"`);
+            }
+            const receipt = yield receipt_1.default.get(tweet.id_str);
+            if (receipt !== null) {
+                throw new Error('The tweet has been processed already');
+            }
+            const result = yield api_1.default.tipEther({
+                senderId: sender.id_str,
+                receiverId: receiver.id_str,
+                amount: amount
+            }).catch((err) => __awaiter(this, void 0, void 0, function* () {
+                yield twitter_1.Twitter.postReplyTweet({
+                    tweetId: tweet.id_str,
+                    username: sender.screen_name,
+                    locale: sender.lang,
+                    phrase: 'Tip Transaction Error',
+                    data: {
+                        sender: sender.screen_name,
+                        amount: amount,
+                        symbol: this.tokens.ETH.symbol
+                    }
+                });
+                throw err;
+            }));
+            yield receipt_1.default.createTipReceipt(tweet.id_str, {
+                tweetId: tweet.id_str,
+                senderId: sender.id_str,
+                receiverId: receiver.id_str,
+                amount: amount,
+                symbol: this.tokens.ETH.symbol,
+                txId: result.txId
+            });
+            yield twitter_1.Twitter.postFavorite({ id: tweet.id_str });
+            // Tip to tipether
+            if (receiver.id_str === this.id) {
+                return twitter_1.Twitter.postReplyTweet({
+                    tweetId: tweet.id_str,
+                    username: sender.screen_name,
+                    locale: sender.lang,
+                    phrase: 'Thanks for OTOSHIDAMA',
+                    data: {
+                        sender: sender.screen_name,
+                        receiver: receiver.screen_name,
+                        amount: amount,
+                        symbol: this.tokens.ETH.symbol,
+                        txId: result.txId
+                    }
+                });
+            }
+            return twitter_1.Twitter.postReplyTweet({
+                tweetId: tweet.id_str,
+                username: sender.screen_name,
+                locale: receiver.lang,
+                phrase: 'OTOSHIDAMA Tweet',
+                data: {
+                    sender: sender.screen_name,
+                    receiver: receiver.screen_name,
+                    amount: amount,
+                    symbol: this.tokens.ETH.symbol
+                }
+            });
         });
     }
     handleWithdraw(obj) {

@@ -11,6 +11,7 @@ var CommandType;
     CommandType["DEPOSIT"] = "deposit";
     CommandType["BALANCE"] = "balance";
     CommandType["HELP"] = "help";
+    CommandType["OTOSHIDAMA"] = "otoshidama";
 })(CommandType = exports.CommandType || (exports.CommandType = {}));
 class Parser {
     constructor(obj) {

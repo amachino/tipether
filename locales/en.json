@@ -11,5 +11,8 @@
   "Tip Transaction Error": "Insufficient funds for {{amount}} {{symbol}} + gas.. Please check your balance.",
   "Withdraw Limit Error": "Maximum withdrawal is currently {{limit}} {{symbol}}. Please try again with smaller amount.",
   "Withdraw Transaction Error": "Insufficient funds for {{amount}} {{symbol}} + gas.. Please check your balance.",
-  "Thanks for Tip": "Wow! You gave me {{amount}} {{symbol}} tip!\nThis will help developing {{receiver}}, Thank you!!"
+  "Thanks for Tip": "Wow! You gave me {{amount}} {{symbol}} tip!\nThis will help developing {{receiver}}, Thank you!!",
+  "OTOSHIDAMA Tweet": "🌈 Happy New Year 🦄\n@{{sender}} sent {{amount}} {{symbol}} OTOSHIDAMA to @{{receiver}} !\nhttps://ipfs.io/ipfs/QmUQmaSndA7YcWUGU76ymmP2ovYE4R1hXmzXkPN36m9paZ",
+  "OTOSHIDAMA Limit Error": "Maximum Otoshidama is {{limit}} {{symbol}}. Please try again with smaller amount.",
+  "Thanks for OTOSHIDAMA": "Wow! You gave me {{amount}} {{symbol}} OTOSHIDAMA!\nThis will help developing {{receiver}}, Thank you!!"
 }

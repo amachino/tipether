@@ -2,6 +2,7 @@
 // http://github.com/Hardmath123/nearley
 function id(d:any[]):any {return d[0];}
 declare var tip:any;
+declare var otoshidama:any;
 declare var withdraw:any;
 declare var deposit:any;
 declare var balance:any;
@@ -23,6 +24,7 @@ const lexer = moo.compile({
   number: /(?:[1-9][0-9]*|0)(?:\.[0-9]+)?/,
   eth: /[eE]ther|ETH|[eE]th/,
   tip: /[tT]ip/,
+  otoshidama: /[oO]toshidama|お年玉/,
   withdraw: /[wW]ithdraw/,
   deposit: /[dD]eposit/,
   balance: /[bB]alance/,
@@ -42,8 +44,11 @@ export var ParserRules:NearleyRule[] = [
     {"name": "AnyCommand", "symbols": ["BalanceCommand"], "postprocess": id},
     {"name": "AnyCommand", "symbols": ["DepositCommand"], "postprocess": id},
     {"name": "AnyCommand", "symbols": ["HelpCommand"], "postprocess": id},
+    {"name": "AnyCommand", "symbols": ["OtoshidamaCommand"], "postprocess": id},
     {"name": "TipCommand", "symbols": ["_", (lexer.has("tip") ? {type: "tip"} : tip), "__", "Username"], "postprocess": d => ({ type: CommandType.TIP, username: d[3] })},
     {"name": "TipCommand", "symbols": ["TipCommand", "_", "Amount"], "postprocess": d => Object.assign(d[0], d[2])},
+    {"name": "OtoshidamaCommand", "symbols": ["_", (lexer.has("otoshidama") ? {type: "otoshidama"} : otoshidama), "__", "Username"], "postprocess": d => ({ type: CommandType.OTOSHIDAMA, username: d[3] })},
+    {"name": "OtoshidamaCommand", "symbols": ["OtoshidamaCommand", "_", "Amount"], "postprocess": d => Object.assign(d[0], d[2])},
     {"name": "WithdrawCommand", "symbols": ["_", (lexer.has("withdraw") ? {type: "withdraw"} : withdraw), "__", "Amount", "__", "Address"], "postprocess": d => Object.assign({ type: CommandType.WITHDRAW, address: d[5] }, d[3])},
     {"name": "DepositCommand", "symbols": ["_", (lexer.has("deposit") ? {type: "deposit"} : deposit)], "postprocess": d => ({ type: CommandType.DEPOSIT })},
     {"name": "BalanceCommand", "symbols": ["_", (lexer.has("balance") ? {type: "balance"} : balance)], "postprocess": d => ({ type: CommandType.BALANCE })},

@@ -18,7 +18,8 @@ export enum CommandType {
   WITHDRAW = 'withdraw',
   DEPOSIT = 'deposit',
   BALANCE = 'balance',
-  HELP = 'help'
+  HELP = 'help',
+  OTOSHIDAMA = 'otoshidama'
 }
 
 export class Parser {

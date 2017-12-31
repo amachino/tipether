@@ -11,6 +11,7 @@ const lexer = moo.compile({
   number: /(?:[1-9][0-9]*|0)(?:\.[0-9]+)?/,
   eth: /[eE]ther|ETH|[eE]th/,
   tip: /[tT]ip/,
+  otoshidama: /[oO]toshidama|お年玉/,
   withdraw: /[wW]ithdraw/,
   deposit: /[dD]eposit/,
   balance: /[bB]alance/,
@@ -29,9 +30,13 @@ AnyCommand -> TipCommand {% id %}
             | BalanceCommand {% id %}
             | DepositCommand {% id %}
             | HelpCommand {% id %}
+            | OtoshidamaCommand {% id %}
 
 TipCommand -> _ %tip __ Username {% d => ({ type: CommandType.TIP, username: d[3] }) %}
             | TipCommand _ Amount {% d => Object.assign(d[0], d[2]) %}
+
+OtoshidamaCommand -> _ %otoshidama __ Username {% d => ({ type: CommandType.OTOSHIDAMA, username: d[3] }) %}
+                   | OtoshidamaCommand _ Amount {% d => Object.assign(d[0], d[2]) %}
 
 WithdrawCommand -> _ %withdraw __ Amount __ Address  {% d => Object.assign({ type: CommandType.WITHDRAW, address: d[5] }, d[3]) %}
 

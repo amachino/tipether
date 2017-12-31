@@ -11,5 +11,8 @@
   "Tip Transaction Error": "{{amount}} {{symbol}} + gas を送るための残高が足りていません.. 残高を確認してみてください。",
   "Withdraw Limit Error": "一度の出金上限額は現在 {{limit}} {{symbol}} なのです。これより少ない額で試してみてください。",
   "Withdraw Transaction Error": "{{amount}} {{symbol}} + gas を送るための残高が足りていません.. 残高を確認してみてください。",
-  "Thanks for Tip": "ぼくにチップくれるの！？ ありがとう！！\n{{amount}} {{symbol}} を寄付用アドレスに入れさせてもらったよ！"
+  "Thanks for Tip": "ぼくにチップくれるの！？ ありがとう！！\n{{amount}} {{symbol}} を寄付用アドレスに入れさせてもらったよ！",
+  "OTOSHIDAMA Tweet": "🎍 明けましておめでとう 🗻\n@{{sender}} さんから @{{receiver}} さんに {{amount}} {{symbol}} のお年玉が届いたよ！\nhttps://ipfs.io/ipfs/QmUQmaSndA7YcWUGU76ymmP2ovYE4R1hXmzXkPN36m9paZ",
+  "OTOSHIDAMA Limit Error": "お年玉上限額は {{limit}} {{symbol}} なのです。これより少ない額で試してみてください。",
+  "Thanks for OTOSHIDAMA": "ぼくにお年玉くれるの！？ ありがとう！！\n{{amount}} {{symbol}} を寄付用アドレスに入れさせてもらったよ！"
 }

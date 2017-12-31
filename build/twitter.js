@@ -61,6 +61,39 @@ class Twitter {
             return result.data;
         });
     }
+    static postTweetWithMedia(obj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                api.postMediaChunked({ file_path: obj.mediaPath }, (err, data, response) => __awaiter(this, void 0, void 0, function* () {
+                    if (err) {
+                        reject(err);
+                    }
+                    const result = yield api.post('statuses/update', {
+                        media_ids: [data.media_id_string],
+                        status: i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+                    });
+                    resolve(result.data);
+                }));
+            });
+        });
+    }
+    static postReplyTweetWithMedia(obj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                api.postMediaChunked({ file_path: obj.mediaPath }, (err, data, response) => __awaiter(this, void 0, void 0, function* () {
+                    if (err) {
+                        reject(err);
+                    }
+                    const result = yield api.post('statuses/update', {
+                        in_reply_to_status_id: obj.tweetId,
+                        media_ids: [data.media_id_string],
+                        status: `@${obj.username} ` + i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+                    });
+                    resolve(result.data);
+                }));
+            });
+        });
+    }
     static postFavorite(obj) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield api.post('favorites/create', { id: obj.id });
