@@ -39,7 +39,7 @@ class Twitter {
     static postTweet(obj) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield api.post('statuses/update', {
-                status: i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+                status: i18n_1.default({ phrase: obj.phrase, locale: obj.locale }, obj.data)
             });
             return result.data;
         });
@@ -47,7 +47,7 @@ class Twitter {
     static postMentionTweet(obj) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield api.post('statuses/update', {
-                status: `@${obj.username} \n` + i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+                status: `@${obj.username} \n` + i18n_1.default({ phrase: obj.phrase, locale: obj.locale }, obj.data)
             });
             return result.data;
         });
@@ -55,7 +55,7 @@ class Twitter {
     static postReplyTweet(obj) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield api.post('statuses/update', {
-                status: `@${obj.username} ` + i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data),
+                status: `@${obj.username} ` + i18n_1.default({ phrase: obj.phrase, locale: obj.locale }, obj.data),
                 in_reply_to_status_id: obj.tweetId
             });
             return result.data;
@@ -70,7 +70,7 @@ class Twitter {
                     }
                     const result = yield api.post('statuses/update', {
                         media_ids: [data.media_id_string],
-                        status: i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+                        status: i18n_1.default({ phrase: obj.phrase, locale: obj.locale }, obj.data)
                     });
                     resolve(result.data);
                 }));
@@ -87,7 +87,7 @@ class Twitter {
                     const result = yield api.post('statuses/update', {
                         in_reply_to_status_id: obj.tweetId,
                         media_ids: [data.media_id_string],
-                        status: `@${obj.username} ` + i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+                        status: `@${obj.username} ` + i18n_1.default({ phrase: obj.phrase, locale: obj.locale }, obj.data)
                     });
                     resolve(result.data);
                 }));
@@ -108,7 +108,7 @@ class Twitter {
                     message_create: {
                         target: { recipient_id: obj.recipientId },
                         message_data: {
-                            text: i18n_1.default.__({ phrase: obj.phrase, locale: obj.locale }, obj.data)
+                            text: i18n_1.default({ phrase: obj.phrase, locale: obj.locale }, obj.data)
                         }
                     }
                 }
