@@ -5,12 +5,14 @@
   "main": "build/index.js",
   "scripts": {
     "dev": "npm run build && npm run start",
-    "build": "npm run lint && npm run nearley && tsc",
+    "build": "npm run lint && npm run nearley && npm run compile",
+    "compile": "tsc",
     "watch": "tsc --watch",
     "start": "node build/index.js",
     "test": "mocha --require ts-node/register test/**/*.ts",
     "lint": "tslint --format stylish --exclude src/command.ts src/**/*.ts",
-    "nearley": "nearleyc src/command.ne -o src/command.ts"
+    "nearley": "nearleyc src/command.ne -o src/command.ts",
+    "postinstall": "npm run build"
   },
   "author": "tipether",
   "license": "MIT",
@@ -22,13 +24,14 @@
     "moo": "^0.4.3",
     "nearley": "^2.11.0",
     "twit": "^2.2.9",
-    "winston": "^2.4.0"
-  },
-  "devDependencies": {
+    "winston": "^2.4.0",
     "@types/express": "^4.0.39",
     "mocha": "^4.0.1",
     "ts-node": "^4.0.2",
     "tslint": "^5.8.0",
     "typescript": "^2.6.2"
+  },
+  "devDependencies": {
+
   }
 }
