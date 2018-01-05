@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class Util {
+class Utils {
     static normalizeToEth(symbol, amount) {
         if (symbol.toUpperCase() === 'ETH') {
             return amount;
@@ -12,6 +12,14 @@ class Util {
             throw new Error(`Invalid symbol: should be either "ETH" or "Wei"`);
         }
     }
+    static validateAddress(address) {
+        if (/0x[0-9a-fA-F]{40}/.test(address) || /[0-9a-zA-Z-]+\.eth/.test(address)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }
-exports.default = Util;
-//# sourceMappingURL=util.js.map
+exports.default = Utils;
+//# sourceMappingURL=utils.js.map

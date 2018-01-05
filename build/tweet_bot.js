@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
+const utils_1 = require("./utils");
 const config_1 = require("./config");
 const logger_1 = require("./logger");
 const api_1 = require("./api");
@@ -219,7 +220,7 @@ class TweetBot {
             if (type !== parser_1.CommandType.WITHDRAW) {
                 throw new Error('invalid command type');
             }
-            if (!/0x[0-9a-fA-F]{40}/.test(address)) {
+            if (!utils_1.default.validateAddress(address)) {
                 throw new Error('invalid address');
             }
             if (typeof amount !== 'number' || typeof symbol !== 'string') {

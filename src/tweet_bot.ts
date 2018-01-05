@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import utils from './utils'
 import config from './config'
 import logger from './logger'
 import API from './api'
@@ -236,7 +237,7 @@ export default class TweetBot {
       throw new Error('invalid command type')
     }
 
-    if (!/0x[0-9a-fA-F]{40}/.test(address)) {
+    if (!utils.validateAddress(address)) {
       throw new Error('invalid address')
     }
 

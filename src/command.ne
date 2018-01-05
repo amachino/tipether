@@ -6,6 +6,7 @@ import * as moo from 'moo'
 
 const lexer = moo.compile({
   space: / +/,
+  ens: /[0-9a-zA-Z-]+\.eth/,
   address: /0x[0-9a-fA-F]{40}/,
   username: /@[0-9a-zA-Z_]{1,15}/,
   number: /(?:[1-9][0-9]*|0)(?:\.[0-9]+)?/,
@@ -38,7 +39,7 @@ TipCommand -> _ %tip __ Username {% d => ({ type: CommandType.TIP, username: d[3
 OtoshidamaCommand -> _ %otoshidama __ Username {% d => ({ type: CommandType.OTOSHIDAMA, username: d[3] }) %}
                    | OtoshidamaCommand _ Amount {% d => Object.assign(d[0], d[2]) %}
 
-WithdrawCommand -> _ %withdraw __ Amount __ Address  {% d => Object.assign({ type: CommandType.WITHDRAW, address: d[5] }, d[3]) %}
+WithdrawCommand -> _ %withdraw __ Amount __ AddressOrENS  {% d => Object.assign({ type: CommandType.WITHDRAW, address: d[5] }, d[3]) %}
 
 DepositCommand -> _ %deposit {% d => ({ type: CommandType.DEPOSIT }) %}
 
@@ -50,7 +51,12 @@ Amount -> Number _ Symbol {% d => ({ amount: d[0], symbol: d[2] }) %}
 
 Symbol -> %eth {% d => 'ETH' %}
 
+AddressOrENS -> Address {% id %}
+              | ENS {% id %}
+
 Address -> %address {% d => d[0].value %}
+
+ENS -> %ens {% d => d[0].value %}
 
 Username -> %username {% d => d[0].value.slice(1) %}
 
