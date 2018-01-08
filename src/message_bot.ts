@@ -216,16 +216,40 @@ export default class MessageBot {
       receiverId: receiver.id_str,
       amount: amount
     }).catch(async err => {
-      await Twitter.postMessage({
-        recipientId: sender.id_str,
-        locale: sender.lang,
-        phrase: 'Tip Transaction Error',
-        data: {
-          sender: sender.screen_name,
-          amount: amount,
-          symbol: this.tokens.ETH.symbol
-        }
-      })
+      if (err.message === 'insufficient funds for gas * price + value') {
+        await Twitter.postMessage({
+          recipientId: sender.id_str,
+          locale: sender.lang,
+          phrase: 'Insufficient Funds for Tip',
+          data: {
+            sender: sender.screen_name,
+            amount: amount,
+            symbol: this.tokens.ETH.symbol
+          }
+        })
+      } else if (err.message === 'invalid value') {
+        await Twitter.postMessage({
+          recipientId: sender.id_str,
+          locale: sender.lang,
+          phrase: 'Invalid Value for Tip',
+          data: {
+            sender: sender.screen_name,
+            amount: amount,
+            symbol: this.tokens.ETH.symbol
+          }
+        })
+      } else {
+        await Twitter.postMessage({
+          recipientId: sender.id_str,
+          locale: sender.lang,
+          phrase: 'Tip Transaction Error',
+          data: {
+            sender: sender.screen_name,
+            amount: amount,
+            symbol: this.tokens.ETH.symbol
+          }
+        })
+      }
       throw err
     })
 

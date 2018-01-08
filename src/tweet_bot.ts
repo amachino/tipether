@@ -334,17 +334,43 @@ export default class TweetBot {
       receiverId: receiver.id_str,
       amount: amount
     }).catch(async err => {
-      await Twitter.postReplyTweet({
-        tweetId: tweet.id_str,
-        username: sender.screen_name,
-        locale: sender.lang,
-        phrase: 'Tip Transaction Error',
-        data: {
-          sender: sender.screen_name,
-          amount: amount,
-          symbol: this.tokens.ETH.symbol
-        }
-      })
+      if (err.message === 'insufficient funds for gas * price + value') {
+        await Twitter.postReplyTweet({
+          tweetId: tweet.id_str,
+          username: sender.screen_name,
+          locale: sender.lang,
+          phrase: 'Insufficient Funds for Tip',
+          data: {
+            sender: sender.screen_name,
+            amount: amount,
+            symbol: this.tokens.ETH.symbol
+          }
+        })
+      } else if (err.message === 'invalid value') {
+        await Twitter.postReplyTweet({
+          tweetId: tweet.id_str,
+          username: sender.screen_name,
+          locale: sender.lang,
+          phrase: 'Invalid Value for Tip',
+          data: {
+            sender: sender.screen_name,
+            amount: amount,
+            symbol: this.tokens.ETH.symbol
+          }
+        })
+      } else {
+        await Twitter.postReplyTweet({
+          tweetId: tweet.id_str,
+          username: sender.screen_name,
+          locale: sender.lang,
+          phrase: 'Tip Transaction Error',
+          data: {
+            sender: sender.screen_name,
+            amount: amount,
+            symbol: this.tokens.ETH.symbol
+          }
+        })
+      }
       throw err
     })
 

@@ -13,11 +13,29 @@ export default class API {
   }
 
   public static tipEther(data: { senderId: string, receiverId: string, amount: number }): Promise<{ txId: string }> {
-    return this.call(config.API_FUNC_TIP_ETHER, data)
+    const result = this.call(config.API_FUNC_TIP_ETHER, data).catch(err => {
+      if (err.response.data === 'insufficient funds for gas * price + value') {
+        throw new Error(err.response.data)
+      } else if (err.response.data === 'invalid value') {
+        throw new Error(err.response.data)
+      } else {
+        throw err
+      }
+    })
+    return result
   }
 
   public static withdrawEther(data: { senderId: string, address: string, amount: number }): Promise<{ txId: string }> {
-    return this.call(config.API_FUNC_WITHDRAW_ETHER, data)
+    const result = this.call(config.API_FUNC_WITHDRAW_ETHER, data).catch(err => {
+      if (err.response.data === 'insufficient funds for gas * price + value') {
+        throw new Error(err.response.data)
+      } else if (err.response.data === 'invalid value') {
+        throw new Error(err.response.data)
+      } else {
+        throw err
+      }
+    })
+    return result
   }
 
   private static async call(name: string, data: any): Promise<any> {
