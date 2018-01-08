@@ -71,9 +71,6 @@ export default class TweetBot {
       case CommandType.TIP: {
         return this.handleTip({ tweet, command }).catch(err => logger.error(err))
       }
-      case CommandType.OTOSHIDAMA: {
-        return this.handleOtoshidama({ tweet, command }).catch(err => logger.error(err))
-      }
       case CommandType.WITHDRAW: {
         return this.handleWithdraw({ tweet, command }).catch(err => logger.error(err))
       }
@@ -117,115 +114,6 @@ export default class TweetBot {
     }
 
     return this.handleTipEther({ tweet, sender, receiver, amount, symbol })
-  }
-
-  private async handleOtoshidama(obj: { tweet: Tweet, command: Command }): Promise<any> {
-    const tweet = obj.tweet, command = obj.command
-    const sender: User = tweet.user
-
-    const type = command.type
-    if (type !== CommandType.OTOSHIDAMA) {
-      throw new Error('invalid command type')
-    }
-
-    let amount = command.amount
-    if (typeof amount !== 'number') {
-      amount = 0.01
-    }
-
-    let symbol = command.symbol
-    if (typeof symbol !== 'string') {
-      symbol = this.tokens.ETH.symbol
-    }
-
-    const receiver = await Twitter.getUser({ screenName: command.username })
-    if (!receiver) {
-      throw new Error('no such user')
-    }
-
-    if (amount <= 0 || amount > this.tokens.ETH.maxTipAmount) {
-      await Twitter.postReplyTweet({
-        tweetId: tweet.id_str,
-        username: sender.screen_name,
-        locale: sender.lang,
-        phrase: 'OTOSHIDAMA Limit Error',
-        data: {
-          sender: sender.screen_name,
-          limit: this.tokens.ETH.maxTipAmount,
-          symbol: this.tokens.ETH.symbol
-        }
-      })
-      throw new Error(`Invalid amount: should be "0 < amount <= ${this.tokens.ETH.maxTipAmount}"`)
-    }
-
-    if (symbol.toUpperCase() !== this.tokens.ETH.symbol) {
-      throw new Error(`Invalid symbol: should be "ETH"`)
-    }
-
-    const receipt = await Receipt.get(tweet.id_str)
-    if (receipt !== null) {
-      throw new Error('The tweet has been processed already')
-    }
-
-    const result = await API.tipEther({
-      senderId: sender.id_str,
-      receiverId: receiver.id_str,
-      amount: amount
-    }).catch(async err => {
-      await Twitter.postReplyTweet({
-        tweetId: tweet.id_str,
-        username: sender.screen_name,
-        locale: sender.lang,
-        phrase: 'Tip Transaction Error',
-        data: {
-          sender: sender.screen_name,
-          amount: amount,
-          symbol: this.tokens.ETH.symbol
-        }
-      })
-      throw err
-    })
-
-    await Receipt.createTipReceipt(tweet.id_str, {
-      tweetId: tweet.id_str,
-      senderId: sender.id_str,
-      receiverId: receiver.id_str,
-      amount: amount,
-      symbol: this.tokens.ETH.symbol,
-      txId: result.txId
-    })
-
-    await Twitter.postFavorite({ id: tweet.id_str })
-
-    // Tip to tipether
-    if (receiver.id_str === this.id) {
-      return Twitter.postReplyTweet({
-        tweetId: tweet.id_str,
-        username: sender.screen_name,
-        locale: sender.lang,
-        phrase: 'Thanks for OTOSHIDAMA',
-        data: {
-          sender: sender.screen_name,
-          receiver: receiver.screen_name,
-          amount: amount,
-          symbol: this.tokens.ETH.symbol,
-          txId: result.txId
-        }
-      })
-    }
-
-    return Twitter.postReplyTweet({
-      tweetId: tweet.id_str,
-      username: sender.screen_name,
-      locale: receiver.lang,
-      phrase: 'OTOSHIDAMA Tweet',
-      data: {
-        sender: sender.screen_name,
-        receiver: receiver.screen_name,
-        amount: amount,
-        symbol: this.tokens.ETH.symbol
-      }
-    })
   }
 
   private async handleWithdraw(obj: { tweet: Tweet, command: Command }): Promise<any> {
