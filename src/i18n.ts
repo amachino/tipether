@@ -5,7 +5,7 @@ i18n.configure({
   directory: path.join(__dirname + '/../locales')
 })
 
-const locales = ['en', 'ja']
+const locales = ['en']
 const defaultLocale = 'en'
 
 export default function __(obj: { phrase: string, locale: string }, data: any) {

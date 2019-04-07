@@ -3,15 +3,12 @@
   "Tip Sent": "You sent {{amount}} {{symbol}} to @{{receiver}} !",
   "Transaction Sent": "You sent {{amount}} {{symbol}} to {{address}}\n\nTransaction ID: {{txId}}",
   "Show Balance": "Your balance is {{balance}} {{symbol}} !",
-  "Show Address": "Your deposit address is:\n\n{{address}}\n\nSend ETH to this address.",
-  "Show Tweet Help": "Send tip:\n@{{botName}} tip @<username> 0.01 ETH\n\nShow balance:\n@{{botName}} balance\n\nShow deposit address:\n@{{botName}} deposit\n\nWithdraw to address:\n@{{botName}} withdraw 0.1 ETH <address>",
-  "Show Message Help": "Send tip:\ntip @<username> 0.01 ETH\n\nShow balance:\nbalance\n\nShow deposit address:\ndeposit\n\nWithdraw to address:\nwithdraw 0.1 ETH <address>",
-  "Show Welcome Message": "Thank you for following!\n\nPlease message “help” here to check commands!",
+  "Show Address": "Deposit command is unavailable prior to the termination of TipEther in 2019.",
+  "Show Tweet Help": "Send tip:\n@{{botName}} tip @<username> 0.01 ETH\n\nShow balance:\n@{{botName}} balance\n\nWithdraw to address:\n@{{botName}} withdraw 0.1 ETH <address>",
   "Insufficient Funds for Tip": "Insufficient funds for {{amount}} {{symbol}} + gas.. Please check your balance.",
   "Invalid Value for Tip": "Invalid Value for Tip: {{amount}} {{symbol}}",
   "Tip Limit Error": "Maximum tip is currently {{limit}} {{symbol}}. Please try again with smaller amount.",
   "Tip Transaction Error": "Sorry, something went wrong.. Please try again later.",
   "Withdraw Limit Error": "Maximum withdrawal is currently {{limit}} {{symbol}}. Please try again with smaller amount.",
-  "Withdraw Transaction Error": "Insufficient funds for {{amount}} {{symbol}} + gas.. Please check your balance.",
-  "Thanks for Tip": "Wow! You gave me {{amount}} {{symbol}} tip!\nThis will help developing {{receiver}}, Thank you!!"
+  "Withdraw Transaction Error": "Insufficient funds for {{amount}} {{symbol}} + gas.. Please check your balance."
 }

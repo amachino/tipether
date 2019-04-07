@@ -1,7 +1,5 @@
-import config from './config'
 import logger from './logger'
 import TweetBot from './tweet_bot'
-import MessageBot from './message_bot'
 import { Token } from './token'
 
 async function main() {
@@ -9,9 +7,6 @@ async function main() {
 
   const tweetBot = new TweetBot(tokens)
   tweetBot.start()
-
-  // const messageBot = new MessageBot(tokens)
-  // messageBot.start()
 }
 
 main().catch(err => {
