@@ -16,10 +16,14 @@
   },
   "author": "tipether",
   "license": "MIT",
+  "engines": {
+    "node": "10.9.0",
+    "npm": "6.4.1"
+  },
   "dependencies": {
     "axios": "^0.17.1",
     "dotenv": "^4.0.0",
-    "firebase-admin": "^5.5.1",
+    "firebase-admin": "^6.0.0",
     "i18n": "^0.8.3",
     "moo": "^0.4.3",
     "nearley": "^2.11.0",
@@ -31,7 +35,5 @@
     "tslint": "^5.8.0",
     "typescript": "^2.6.2"
   },
-  "devDependencies": {
-
-  }
+  "devDependencies": {}
 }

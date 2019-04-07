@@ -10,8 +10,8 @@ async function main() {
   const tweetBot = new TweetBot(tokens)
   tweetBot.start()
 
-  const messageBot = new MessageBot(tokens)
-  messageBot.start()
+  // const messageBot = new MessageBot(tokens)
+  // messageBot.start()
 }
 
 main().catch(err => {
